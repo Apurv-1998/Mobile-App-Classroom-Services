@@ -10,4 +10,6 @@ public interface StudentRepository extends CrudRepository<StudentEntity, Long> {
 	
 	StudentEntity findStudentByEmail(String email);
 	
+	StudentEntity findStudentByStudentId(String studentId);
+	
 }

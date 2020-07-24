@@ -7,6 +7,7 @@ public class CreateStudentsRequestDetailsModel {
 	private String rollNumber;
 	private String email;
 	private String standard;
+	private String section;
 	private String organization;
 	private String gender;
 	private String mobileNumber;
@@ -91,6 +92,14 @@ public class CreateStudentsRequestDetailsModel {
 
 	public void setRollNumber(String rollNumber) {
 		this.rollNumber = rollNumber;
+	}
+
+	public String getSection() {
+		return section;
+	}
+
+	public void setSection(String section) {
+		this.section = section;
 	}
 
 }

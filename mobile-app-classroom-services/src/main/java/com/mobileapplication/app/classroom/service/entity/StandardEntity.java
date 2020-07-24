@@ -1,12 +1,14 @@
 package com.mobileapplication.app.classroom.service.entity;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -31,6 +33,9 @@ public class StandardEntity implements Serializable {
 	@JoinColumn(name = "teachers_id")
 	@JsonIgnore
 	private TeacherEntity teacherDetails;
+	
+	@ManyToMany(mappedBy = "standardDetails")
+	private Collection<SubjectEntity> subjectDetails;
 
 	public long getId() {
 		return id;

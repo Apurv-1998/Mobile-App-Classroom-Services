@@ -1,6 +1,7 @@
 package com.mobileapplication.app.classroom.service.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class StudentDto implements Serializable {
 
@@ -11,6 +12,7 @@ public class StudentDto implements Serializable {
 	private String rollNumber;
 	private String email;
 	private String standard;
+	private String section;
 	private String organization;
 	private String gender;
 	private String mobileNumber;
@@ -21,6 +23,8 @@ public class StudentDto implements Serializable {
 	private String encryptedPassword;
 	
 	private OrganizationDto organizationDetails;
+	
+	private List<AddSubjectDto> subjectDetails;
 
 	public String getStudentId() {
 		return studentId;
@@ -140,6 +144,22 @@ public class StudentDto implements Serializable {
 
 	public void setOrganizationDetails(OrganizationDto organizationDetails) {
 		this.organizationDetails = organizationDetails;
+	}
+
+	public String getSection() {
+		return section;
+	}
+
+	public void setSection(String section) {
+		this.section = section;
+	}
+
+	public List<AddSubjectDto> getSubjectDetails() {
+		return subjectDetails;
+	}
+
+	public void setSubjectDetails(List<AddSubjectDto> subjectDetails) {
+		this.subjectDetails = subjectDetails;
 	}
 
 }
