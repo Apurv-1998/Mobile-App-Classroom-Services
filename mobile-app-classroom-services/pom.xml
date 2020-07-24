@@ -11,6 +11,7 @@
 	<groupId>com.mobileapplication.app.classroom.service</groupId>
 	<artifactId>mobile-app-classroom-services</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
 	<name>mobile-app-classroom-services</name>
 	<description>mobile-app-classroom-services</description>
 

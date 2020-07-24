@@ -1,12 +1,17 @@
 package com.mobileapplication.app.classroom.service.entity;
 
 import java.io.Serializable;
+import java.util.Collection;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -35,6 +40,8 @@ public class StudentEntity implements Serializable {
 	@Column(nullable = false)
 	private String standard;
 	@Column(nullable = false)
+	private String section;
+	@Column(nullable = false)
 	private String organization;
 	@Column(nullable = false)
 	private String gender;
@@ -48,14 +55,16 @@ public class StudentEntity implements Serializable {
 	private boolean emailVerificationstatus = false;
 	@Column(nullable = false)
 	private String encryptedPassword;
-	
-	
+
 	@ManyToOne
 	@JoinColumn(name = "organizations_id")
 	@JsonIgnore
 	private OrganizationEntity organizationDetails;
 	
-	
+	@ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+	@JoinTable(name = "students_subjects",
+	           joinColumns = @JoinColumn(name = "students_id",referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "subjects_id",referencedColumnName = "id"))
+	private Collection<SubjectEntity> subjectDetails;
 
 	public long getId() {
 		return id;
@@ -183,6 +192,22 @@ public class StudentEntity implements Serializable {
 
 	public void setOrganizationDetails(OrganizationEntity organizationDetails) {
 		this.organizationDetails = organizationDetails;
+	}
+
+	public String getSection() {
+		return section;
+	}
+
+	public Collection<SubjectEntity> getSubjectDetails() {
+		return subjectDetails;
+	}
+
+	public void setSubjectDetails(Collection<SubjectEntity> subjectDetails) {
+		this.subjectDetails = subjectDetails;
+	}
+
+	public void setSection(String section) {
+		this.section = section;
 	}
 
 }

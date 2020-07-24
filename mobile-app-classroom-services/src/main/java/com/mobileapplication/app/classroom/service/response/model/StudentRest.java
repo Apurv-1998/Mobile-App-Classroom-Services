@@ -1,5 +1,7 @@
 package com.mobileapplication.app.classroom.service.response.model;
 
+import java.util.List;
+
 public class StudentRest {
 
 	private String studentId;
@@ -11,6 +13,9 @@ public class StudentRest {
 	private String mobileNumber;
 	private String organization;
 	private String standard;
+	private String section;
+	
+	private List<SubjectRest> subjectDetails;
 
 	public String getStudentId() {
 		return studentId;
@@ -82,6 +87,22 @@ public class StudentRest {
 
 	public void setRollNumber(String rollNumber) {
 		this.rollNumber = rollNumber;
+	}
+
+	public String getSection() {
+		return section;
+	}
+
+	public void setSection(String section) {
+		this.section = section;
+	}
+
+	public List<SubjectRest> getSubjectDetails() {
+		return subjectDetails;
+	}
+
+	public void setSubjectDetails(List<SubjectRest> subjectDetails) {
+		this.subjectDetails = subjectDetails;
 	}
 
 }

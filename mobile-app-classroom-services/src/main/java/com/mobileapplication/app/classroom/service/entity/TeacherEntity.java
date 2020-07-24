@@ -59,6 +59,11 @@ public class TeacherEntity implements Serializable {
 	@JsonIgnore
 	private OrganizationEntity organizationDetails;
 
+	@ManyToOne
+	@JoinColumn(name = "subjects_id")
+	@JsonIgnore
+	private SubjectEntity subjectDetails;
+
 	public long getId() {
 		return id;
 	}
@@ -185,6 +190,14 @@ public class TeacherEntity implements Serializable {
 
 	public void setEncrpytedRegId(String encrpytedRegId) {
 		this.encrpytedRegId = encrpytedRegId;
+	}
+
+	public SubjectEntity getSubjectDetails() {
+		return subjectDetails;
+	}
+
+	public void setSubjectDetails(SubjectEntity subjectDetails) {
+		this.subjectDetails = subjectDetails;
 	}
 
 	@Override

@@ -26,6 +26,8 @@ public class TeacherDto implements Serializable {
 
 	private OrganizationDto organizationDetails;
 
+	private AddSubjectDto subjectDetails;
+
 	public String getTeacherId() {
 		return teacherId;
 	}
@@ -144,6 +146,14 @@ public class TeacherDto implements Serializable {
 
 	public void setOrganizationDetails(OrganizationDto organizationDetails) {
 		this.organizationDetails = organizationDetails;
+	}
+
+	public AddSubjectDto getSubjectDetails() {
+		return subjectDetails;
+	}
+
+	public void setSubjectDetails(AddSubjectDto subjectDetails) {
+		this.subjectDetails = subjectDetails;
 	}
 
 	@Override

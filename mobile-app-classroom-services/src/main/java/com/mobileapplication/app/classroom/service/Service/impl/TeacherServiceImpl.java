@@ -5,10 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mobileapplication.app.classroom.service.Service.OrganizationService;
+import com.mobileapplication.app.classroom.service.Service.SubjectService;
 import com.mobileapplication.app.classroom.service.Service.TeacherService;
 import com.mobileapplication.app.classroom.service.dto.StandardDto;
 import com.mobileapplication.app.classroom.service.dto.TeacherDto;
 import com.mobileapplication.app.classroom.service.entity.OrganizationEntity;
+import com.mobileapplication.app.classroom.service.entity.SubjectEntity;
 import com.mobileapplication.app.classroom.service.entity.TeacherEntity;
 import com.mobileapplication.app.classroom.service.repository.OrganizationRepository;
 import com.mobileapplication.app.classroom.service.repository.TeacherRepository;
@@ -31,6 +33,9 @@ public class TeacherServiceImpl implements TeacherService {
 	OrganizationService organizationService;
 	
 	@Autowired
+	SubjectService subjectService;
+	
+	@Autowired
 	Utils utils;
 
 	@Override
@@ -51,6 +56,7 @@ public class TeacherServiceImpl implements TeacherService {
 		
 	//	System.out.println(teacherDto.getStandard());
 		
+		
 		TeacherEntity entity = new TeacherEntity();
 		
 		entity = mapper.map(teacherDto,TeacherEntity.class);
@@ -66,8 +72,14 @@ public class TeacherServiceImpl implements TeacherService {
 		entity.setEncryptedPassword(utils.generateEncryptedPassword(30));
 		entity.setEncrpytedRegId(utils.GenerateEncryptedRegId(20));
 		
+		System.out.println(entity.getStandard().size());
 		
+		SubjectEntity subjectEntity = subjectService.addTeacherInSubject(entity);
+
+		entity.setSubjectDetails(subjectEntity);
 		OrganizationEntity organizationEntity = organizationService.addTeacherInOrganization(entity);
+		
+		
 		
 		entity.setOrganizationDetails(organizationEntity);
 		

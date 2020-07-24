@@ -56,7 +56,7 @@ public class OrganizationServiceimpl implements OrganizationService {
 		
 	}
 
-	@SuppressWarnings("unused")
+
 	@Override
 	public OrganizationEntity addTeacherInOrganization(TeacherEntity entity) {
 		OrganizationEntity returnValue = new OrganizationEntity();
@@ -64,13 +64,15 @@ public class OrganizationServiceimpl implements OrganizationService {
 		if(entity==null)
 			return returnValue;
 		
+		//Hello
+		
+		List<TeacherEntity> teachers = new ArrayList<>();
+		teachers.add(entity);
+		
 		String name = entity.getOrganization();
 		
 		OrganizationEntity organization =  organizationRepository.findOrganizationByName(name);
 		
-		List<TeacherEntity> teachers = organization.getTeacherDetails();
-		
-		teachers.add(entity);
 		
 		if(organization==null) {
 			organization = new OrganizationEntity();
@@ -79,6 +81,8 @@ public class OrganizationServiceimpl implements OrganizationService {
 			organization.setTeacherDetails(teachers);
 		}
 		else {
+			teachers = organization.getTeacherDetails();
+			teachers.add(entity);
 			organization.setTeacherDetails(teachers);
 		}
 		
