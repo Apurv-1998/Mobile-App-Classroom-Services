@@ -1,6 +1,5 @@
 package com.mobileapplication.app.classroom.service.Service.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -14,7 +13,6 @@ import com.mobileapplication.app.classroom.service.dto.AddSubjectDto;
 import com.mobileapplication.app.classroom.service.dto.StudentDto;
 import com.mobileapplication.app.classroom.service.dto.StudentLoginDto;
 import com.mobileapplication.app.classroom.service.entity.OrganizationEntity;
-import com.mobileapplication.app.classroom.service.entity.StandardEntity;
 import com.mobileapplication.app.classroom.service.entity.StudentEntity;
 import com.mobileapplication.app.classroom.service.entity.SubjectEntity;
 import com.mobileapplication.app.classroom.service.entity.TeacherEntity;
@@ -113,27 +111,23 @@ public class StudentServiceImpl implements StudentService {
 		if(subjectEntity==null)
 			return returnValue;
 		
-		TeacherEntity teachers = teacherRepository.findTeacherBySubject(subjectName);
+		List<TeacherEntity> teachers = teacherRepository.findAllTeachersBySubject(subjectName);
 		
 		if(teachers==null)
 			return returnValue;
 		
-		List<StandardEntity> standards = teachers.getStandard();
+		System.out.println(teachers.size());
 		
-		String standard = addSubjectDto.getStandard();
-		String section = addSubjectDto.getSection();
 		
-		boolean flag = false;
+		List<String> standards = utils.GeneratedStandardsString(teachers);
 		
-		for(StandardEntity standardEntity:standards) {
-			if(standardEntity.getStandardName().equalsIgnoreCase(standard) && standardEntity.getSection().equalsIgnoreCase(section)) {
-				flag = true;
-				break;
-			}
-		}
+		System.out.println("Available Standards "+standards);
 		
-		if(!flag)
+		String studentClass = studentEntity.getStandard()+" "+studentEntity.getSection();
+		
+		if(!standards.contains(studentClass))
 			return returnValue;
+		
 		
 		
 		Collection<SubjectEntity> subjects = studentEntity.getSubjectDetails();
