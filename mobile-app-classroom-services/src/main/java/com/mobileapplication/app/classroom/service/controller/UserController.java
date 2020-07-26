@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mobileapplication.app.classroom.service.Service.StudentService;
 import com.mobileapplication.app.classroom.service.Service.TeacherService;
+import com.mobileapplication.app.classroom.service.dto.AddSectionDetailsDto;
 import com.mobileapplication.app.classroom.service.dto.AddSubjectDto;
 import com.mobileapplication.app.classroom.service.dto.StudentDto;
 import com.mobileapplication.app.classroom.service.dto.StudentLoginDto;
 import com.mobileapplication.app.classroom.service.dto.TeacherDto;
+import com.mobileapplication.app.classroom.service.request.model.AddSectionDetailsModel;
 import com.mobileapplication.app.classroom.service.request.model.CreateStudentsRequestDetailsModel;
 import com.mobileapplication.app.classroom.service.request.model.CreateTeacherRequestDetailsModel;
 import com.mobileapplication.app.classroom.service.request.model.StudentLoginDetails;
@@ -99,6 +101,23 @@ public class UserController {
 		
 		return response;
 		
+		
+		
+	}
+	
+	/*---- Add Section --------*/
+	
+	@PostMapping(path = "/teachers/{teacherId}/addSection",produces = {MediaType.APPLICATION_XML_VALUE,MediaType.APPLICATION_JSON_VALUE})
+	public TeacherRest AddSectionRequest(@PathVariable String teacherId, @RequestBody AddSectionDetailsModel addSectionDetailsModel) {
+		
+		AddSectionDetailsDto addSectionDetailsDto = mapper.map(addSectionDetailsModel,AddSectionDetailsDto.class);
+		
+		TeacherDto teacherDto =  teacherService.addTeacherInSection(teacherId,addSectionDetailsDto);
+		
+		TeacherRest response = mapper.map(teacherDto,TeacherRest.class);
+		
+		
+		return response;
 		
 		
 	}

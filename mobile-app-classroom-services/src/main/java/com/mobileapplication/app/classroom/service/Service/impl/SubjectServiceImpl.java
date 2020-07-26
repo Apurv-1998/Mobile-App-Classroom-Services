@@ -6,7 +6,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.mobileapplication.app.classroom.service.Service.OrganizationService;
 import com.mobileapplication.app.classroom.service.Service.SubjectService;
+import com.mobileapplication.app.classroom.service.entity.OrganizationEntity;
 import com.mobileapplication.app.classroom.service.entity.SubjectEntity;
 import com.mobileapplication.app.classroom.service.entity.TeacherEntity;
 import com.mobileapplication.app.classroom.service.repository.SubjectRepository;
@@ -23,12 +25,16 @@ public class SubjectServiceImpl implements SubjectService {
 	TeacherRepository teacherRepository;
 	
 	@Autowired
+	OrganizationService organizationService;
+	
+	@Autowired
 	Utils utils;
 	
 	@Override
-	public SubjectEntity addTeacherInSubject(TeacherEntity teacherEntity) {
+	public TeacherEntity addTeacherInSubject(TeacherEntity teacherEntity) {
 		
-		SubjectEntity returnValue = new SubjectEntity();
+		@SuppressWarnings("unused")
+		TeacherEntity returnValue = new TeacherEntity();
 		
 		List<TeacherEntity> teachers = new ArrayList<>();
 		teachers.add(teacherEntity);
@@ -38,6 +44,7 @@ public class SubjectServiceImpl implements SubjectService {
 		SubjectEntity entity = subjectRepository.findSubjectByName(name);
 		
 		if(entity==null) {
+//			System.out.println("New Subject");
 			entity = new SubjectEntity();
 			entity.setSubjectId(utils.GenerateSubjectId(20));
 			entity.setName(teacherEntity.getSubject());
@@ -45,18 +52,26 @@ public class SubjectServiceImpl implements SubjectService {
 			entity.setStandardDetails(teacherEntity.getStandard());
 		}
 		else {
+//			System.out.println("Subject Exists");
 			teachers = entity.getTeacherDetails();
-			teachers.add(teacherEntity);
-			entity.setTeacherDetails(teachers);
+			if(teacherEntity.getId()!=0L) {
+				teachers.add(teacherEntity);
+				System.out.println("Teachers "+teachers);
+				entity.setTeacherDetails(teachers);
+			}
 		}
 
+		SubjectEntity subjectSaved = subjectRepository.save(entity);
 		
+		teacherEntity.setSubjectDetails(subjectSaved);
 		
-		teacherEntity.setSubjectDetails(entity);
+		OrganizationEntity organizationEntity = organizationService.addTeacherInOrganization(teacherEntity);
 		
-		returnValue = subjectRepository.save(entity);
+		teacherEntity.setOrganizationDetails(organizationEntity);
 		
-		return returnValue;
+		System.out.println("Return Value "+teacherEntity);
+		
+		return teacherEntity;
 		
 		
 	}

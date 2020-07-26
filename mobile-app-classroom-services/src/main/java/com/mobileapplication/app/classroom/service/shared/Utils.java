@@ -1,9 +1,14 @@
 package com.mobileapplication.app.classroom.service.shared;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.springframework.stereotype.Component;
+
+import com.mobileapplication.app.classroom.service.entity.StandardEntity;
+import com.mobileapplication.app.classroom.service.entity.TeacherEntity;
 
 @Component
 public class Utils {
@@ -101,6 +106,32 @@ public class Utils {
 		}
 
 		return new String(sb);
+	}
+
+	public List<String> GeneratedStandardsString(List<TeacherEntity> teachers) {
+		List<String> list = new ArrayList<>();
+		
+		for(TeacherEntity teacher:teachers) {
+			List<StandardEntity> standards = teacher.getStandard();
+			for(StandardEntity standard:standards) {
+				String s = standard.getStandardName()+" "+standard.getSection();
+				list.add(s);
+			}
+		}
+		
+		return list;
+	}
+
+	public List<String> GeneratedAlreadyStandardsString(List<StandardEntity> currentStandards) {
+		List<String> list = new ArrayList<>();
+		
+		for(StandardEntity entity:currentStandards) {
+			String s = entity.getStandardName()+" "+entity.getSection();
+			list.add(s);
+		}
+		
+		
+		return list;
 	}
 	
 	
