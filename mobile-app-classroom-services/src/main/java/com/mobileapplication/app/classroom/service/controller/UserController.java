@@ -13,10 +13,13 @@ import com.mobileapplication.app.classroom.service.Service.StudentService;
 import com.mobileapplication.app.classroom.service.Service.TeacherService;
 import com.mobileapplication.app.classroom.service.dto.AddSectionDetailsDto;
 import com.mobileapplication.app.classroom.service.dto.AddSubjectDto;
+import com.mobileapplication.app.classroom.service.dto.AddTestDetailsDto;
 import com.mobileapplication.app.classroom.service.dto.StudentDto;
 import com.mobileapplication.app.classroom.service.dto.StudentLoginDto;
 import com.mobileapplication.app.classroom.service.dto.TeacherDto;
+import com.mobileapplication.app.classroom.service.entity.TestEntity;
 import com.mobileapplication.app.classroom.service.request.model.AddSectionDetailsModel;
+import com.mobileapplication.app.classroom.service.request.model.AddTestScoreRequestDetailsModel;
 import com.mobileapplication.app.classroom.service.request.model.CreateStudentsRequestDetailsModel;
 import com.mobileapplication.app.classroom.service.request.model.CreateTeacherRequestDetailsModel;
 import com.mobileapplication.app.classroom.service.request.model.StudentLoginDetails;
@@ -119,6 +122,24 @@ public class UserController {
 		
 		return response;
 		
+		
+	}
+	
+	/*----- Teacher Add Score -------*/
+	
+	/*
+	 *1) Teacher find all students by standards.
+	 *2) Iterate through the list and add score.
+	 * */
+	
+	@PostMapping(path = "/{teacherId}/addScore",produces = {MediaType.APPLICATION_XML_VALUE,MediaType.APPLICATION_JSON_VALUE})
+	public boolean addScore(@PathVariable String teacherId,@RequestBody AddTestScoreRequestDetailsModel addTestScoreDetailsModel) {
+		
+		AddTestDetailsDto addTestDetailsDto = mapper.map(addTestScoreDetailsModel,AddTestDetailsDto.class);
+		
+		TestEntity testEntity = teacherService.addTestScore(teacherId,addTestDetailsDto);
+		
+		return testEntity!=null;
 		
 	}
 
