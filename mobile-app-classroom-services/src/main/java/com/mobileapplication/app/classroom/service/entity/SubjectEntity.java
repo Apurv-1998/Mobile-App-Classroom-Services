@@ -35,16 +35,17 @@ public class SubjectEntity implements Serializable {
 //	@Column(nullable = false)
 	private String section;
 
-	@OneToMany(mappedBy = "subjectDetails",cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "subjectDetails", cascade = CascadeType.ALL)
 	private List<TeacherEntity> teacherDetails;
-	
-	
+
+	@OneToMany(mappedBy = "subjectDetails", cascade = CascadeType.ALL)
+	private List<TestEntity> testDetails;
+
 	@ManyToMany(mappedBy = "subjectDetails")
 	private Collection<StudentEntity> studentDetails;
-	
-	@ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-	@JoinTable(name = "subjects_standards",
-	           joinColumns = @JoinColumn(name = "subjects_id",referencedColumnName = "id"),inverseJoinColumns = @JoinColumn(name = "standards_id",referencedColumnName = "id"))
+
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinTable(name = "subjects_standards", joinColumns = @JoinColumn(name = "subjects_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "standards_id", referencedColumnName = "id"))
 	private Collection<StandardEntity> standardDetails;
 
 	public long getId() {
@@ -93,6 +94,14 @@ public class SubjectEntity implements Serializable {
 
 	public void setTeacherDetails(List<TeacherEntity> teacherDetails) {
 		this.teacherDetails = teacherDetails;
+	}
+
+	public List<TestEntity> getTestDetails() {
+		return testDetails;
+	}
+
+	public void setTestDetails(List<TestEntity> testDetails) {
+		this.testDetails = testDetails;
 	}
 
 	public Collection<StudentEntity> getStudentDetails() {

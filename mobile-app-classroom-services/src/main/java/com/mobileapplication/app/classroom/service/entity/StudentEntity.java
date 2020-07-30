@@ -15,6 +15,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -65,6 +68,12 @@ public class StudentEntity implements Serializable {
 	@JoinTable(name = "students_subjects",
 	           joinColumns = @JoinColumn(name = "students_id",referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "subjects_id",referencedColumnName = "id"))
 	private Collection<SubjectEntity> subjectDetails;
+	
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "students_tests",
+			   joinColumns = @JoinColumn(name = "students_id",referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tests_id",referencedColumnName = "id"))
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private Collection<TestEntity> testDetails;
 
 	public long getId() {
 		return id;
@@ -208,6 +217,14 @@ public class StudentEntity implements Serializable {
 
 	public void setSection(String section) {
 		this.section = section;
+	}
+
+	public Collection<TestEntity> getTestDetails() {
+		return testDetails;
+	}
+
+	public void setTestDetails(Collection<TestEntity> testDetails) {
+		this.testDetails = testDetails;
 	}
 
 }

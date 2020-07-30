@@ -15,6 +15,8 @@ public class AddSubjectDto implements Serializable {
 	private List<TeacherDto> teacherDetails;
 	
 	private List<StudentDto> studentDetails;
+	
+	private List<AddTestDetailsDto> testDetails;
 
 	public String getSubjectId() {
 		return subjectId;
@@ -62,6 +64,14 @@ public class AddSubjectDto implements Serializable {
 
 	public void setStudentDetails(List<StudentDto> studentDetails) {
 		this.studentDetails = studentDetails;
+	}
+
+	public List<AddTestDetailsDto> getTestDetails() {
+		return testDetails;
+	}
+
+	public void setTestDetails(List<AddTestDetailsDto> testDetails) {
+		this.testDetails = testDetails;
 	}
 
 }
