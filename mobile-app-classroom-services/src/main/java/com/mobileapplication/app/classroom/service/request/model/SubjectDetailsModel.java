@@ -10,6 +10,9 @@ public class SubjectDetailsModel {
 
 	private List<CreateTeacherRequestDetailsModel> teacherDetails;
 
+	private List<AddTestScoreRequestDetailsModel> testDetails;
+	
+
 	public String getName() {
 		return name;
 	}
@@ -40,6 +43,14 @@ public class SubjectDetailsModel {
 
 	public void setTeacherDetails(List<CreateTeacherRequestDetailsModel> teacherDetails) {
 		this.teacherDetails = teacherDetails;
+	}
+
+	public List<AddTestScoreRequestDetailsModel> getTestDetails() {
+		return testDetails;
+	}
+
+	public void setTestDetails(List<AddTestScoreRequestDetailsModel> testDetails) {
+		this.testDetails = testDetails;
 	}
 
 }

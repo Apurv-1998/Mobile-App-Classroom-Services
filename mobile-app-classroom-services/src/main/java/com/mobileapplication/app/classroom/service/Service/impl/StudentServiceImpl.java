@@ -1,5 +1,6 @@
 package com.mobileapplication.app.classroom.service.Service.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -10,13 +11,18 @@ import org.springframework.stereotype.Service;
 import com.mobileapplication.app.classroom.service.Service.OrganizationService;
 import com.mobileapplication.app.classroom.service.Service.StudentService;
 import com.mobileapplication.app.classroom.service.dto.AddSubjectDto;
+import com.mobileapplication.app.classroom.service.dto.GetFilesDetailsDto;
 import com.mobileapplication.app.classroom.service.dto.StudentDto;
 import com.mobileapplication.app.classroom.service.dto.StudentLoginDto;
+import com.mobileapplication.app.classroom.service.entity.FilesEntity;
 import com.mobileapplication.app.classroom.service.entity.OrganizationEntity;
+import com.mobileapplication.app.classroom.service.entity.StandardEntity;
 import com.mobileapplication.app.classroom.service.entity.StudentEntity;
 import com.mobileapplication.app.classroom.service.entity.SubjectEntity;
 import com.mobileapplication.app.classroom.service.entity.TeacherEntity;
+import com.mobileapplication.app.classroom.service.repository.FilesRepository;
 import com.mobileapplication.app.classroom.service.repository.OrganizationRepository;
+import com.mobileapplication.app.classroom.service.repository.StandardRepository;
 import com.mobileapplication.app.classroom.service.repository.StudentRepository;
 import com.mobileapplication.app.classroom.service.repository.SubjectRepository;
 import com.mobileapplication.app.classroom.service.repository.TeacherRepository;
@@ -42,6 +48,12 @@ public class StudentServiceImpl implements StudentService {
 	
 	@Autowired
 	TeacherRepository teacherRepository;
+	
+	@Autowired
+	StandardRepository standardRepository;
+	
+	@Autowired
+	FilesRepository filesRepository;
 	
 	@Autowired
 	Utils utils;
@@ -152,6 +164,54 @@ public class StudentServiceImpl implements StudentService {
 		returnValue = mapper.map(entity, StudentDto.class);
 		
 		return returnValue;
+	}
+
+	@Override
+	public List<FilesEntity> getAllFiles(GetFilesDetailsDto getFilesDetailsDto) {
+		
+		List<StandardEntity> standards = standardRepository.findAllStandardsByStandardName(getFilesDetailsDto.getStandard());
+		
+		if(standards==null)
+			return null;
+		
+	    List<TeacherEntity> teachers = new ArrayList<>();
+	    
+	    for(StandardEntity standard:standards) {
+	    	teachers.add(standard.getTeacherDetails());
+	    }
+	    
+	    TeacherEntity teacher = null;
+	    boolean flag = false;
+	    
+	    for(TeacherEntity entity:teachers) {
+	    	List<StandardEntity> standardEntity = entity.getStandard();
+	    	
+	    	for(StandardEntity standard:standardEntity) {
+	    		if(standard.getSection().equals(getFilesDetailsDto.getSection())) {
+	    			teacher = entity;
+	    			flag = true;
+	    			break;
+	    		}
+	    	}
+	    	if(flag)
+	    		break;
+	    }
+	    
+	    if(teacher==null)
+	    	return null;
+		
+	    if(!teacher.getSubject().equalsIgnoreCase(getFilesDetailsDto.getSubjectName()))
+	    	return null;
+	    
+	    return teacher.getFileDetails();
+		
+	}
+
+	@Override
+	public FilesEntity getFiles(String fileId, String studentId) {
+		FilesEntity entity = filesRepository.findAllFilesByFilesId(fileId);
+		
+		return entity;
 	}
 
 }

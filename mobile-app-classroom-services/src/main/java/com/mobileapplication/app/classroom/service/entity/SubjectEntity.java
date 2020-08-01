@@ -16,6 +16,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "subjects")
 public class SubjectEntity implements Serializable {
@@ -35,16 +37,24 @@ public class SubjectEntity implements Serializable {
 //	@Column(nullable = false)
 	private String section;
 
-	@OneToMany(mappedBy = "subjectDetails",cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "subjectDetails", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<TeacherEntity> teacherDetails;
-	
-	
+
+	@OneToMany(mappedBy = "subjectDetails", cascade = CascadeType.ALL)
+	@JsonIgnore
+	private List<TestEntity> testDetails;
+
+	@OneToMany(mappedBy = "subjectDetails", cascade = CascadeType.ALL)
+	private List<FilesEntity> fileDetails;
+
 	@ManyToMany(mappedBy = "subjectDetails")
+	@JsonIgnore
 	private Collection<StudentEntity> studentDetails;
-	
-	@ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-	@JoinTable(name = "subjects_standards",
-	           joinColumns = @JoinColumn(name = "subjects_id",referencedColumnName = "id"),inverseJoinColumns = @JoinColumn(name = "standards_id",referencedColumnName = "id"))
+
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinTable(name = "subjects_standards", joinColumns = @JoinColumn(name = "subjects_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "standards_id", referencedColumnName = "id"))
+	@JsonIgnore
 	private Collection<StandardEntity> standardDetails;
 
 	public long getId() {
@@ -95,6 +105,14 @@ public class SubjectEntity implements Serializable {
 		this.teacherDetails = teacherDetails;
 	}
 
+	public List<TestEntity> getTestDetails() {
+		return testDetails;
+	}
+
+	public void setTestDetails(List<TestEntity> testDetails) {
+		this.testDetails = testDetails;
+	}
+
 	public Collection<StudentEntity> getStudentDetails() {
 		return studentDetails;
 	}
@@ -109,6 +127,21 @@ public class SubjectEntity implements Serializable {
 
 	public void setStandardDetails(Collection<StandardEntity> standardDetails) {
 		this.standardDetails = standardDetails;
+	}
+
+	public List<FilesEntity> getFileDetails() {
+		return fileDetails;
+	}
+
+	public void setFileDetails(List<FilesEntity> fileDetails) {
+		this.fileDetails = fileDetails;
+	}
+
+	@Override
+	public String toString() {
+		return "SubjectEntity [id=" + id + ", subjectId=" + subjectId + ", name=" + name + ", standard=" + standard
+				+ ", section=" + section + ", teacherDetails=" + teacherDetails + ", testDetails=" + testDetails
+				+ ", studentDetails=" + studentDetails + ", standardDetails=" + standardDetails + "]";
 	}
 
 }
