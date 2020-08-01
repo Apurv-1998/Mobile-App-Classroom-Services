@@ -1,29 +1,42 @@
 package com.mobileapplication.app.classroom.service.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.mobileapplication.app.classroom.service.Service.StudentService;
 import com.mobileapplication.app.classroom.service.Service.TeacherService;
 import com.mobileapplication.app.classroom.service.dto.AddSectionDetailsDto;
 import com.mobileapplication.app.classroom.service.dto.AddSubjectDto;
 import com.mobileapplication.app.classroom.service.dto.AddTestDetailsDto;
+import com.mobileapplication.app.classroom.service.dto.GetFilesDetailsDto;
 import com.mobileapplication.app.classroom.service.dto.StudentDto;
 import com.mobileapplication.app.classroom.service.dto.StudentLoginDto;
 import com.mobileapplication.app.classroom.service.dto.TeacherDto;
+import com.mobileapplication.app.classroom.service.entity.FilesEntity;
 import com.mobileapplication.app.classroom.service.entity.TestEntity;
 import com.mobileapplication.app.classroom.service.request.model.AddSectionDetailsModel;
 import com.mobileapplication.app.classroom.service.request.model.AddTestScoreRequestDetailsModel;
 import com.mobileapplication.app.classroom.service.request.model.CreateStudentsRequestDetailsModel;
 import com.mobileapplication.app.classroom.service.request.model.CreateTeacherRequestDetailsModel;
+import com.mobileapplication.app.classroom.service.request.model.GetFilesDetailsModel;
 import com.mobileapplication.app.classroom.service.request.model.StudentLoginDetails;
 import com.mobileapplication.app.classroom.service.request.model.SubjectDetailsModel;
+import com.mobileapplication.app.classroom.service.response.model.FilesRest;
 import com.mobileapplication.app.classroom.service.response.model.StudentRest;
 import com.mobileapplication.app.classroom.service.response.model.TeacherRest;
 
@@ -88,6 +101,41 @@ public class UserController {
 	}
 	
 	
+	/*-------- Student Getting The List Of Files -----------*/
+	
+	@PostMapping(path = "/{studentId}/getFiles")
+	public List<FilesRest> getFiles(@PathVariable String studentId,@RequestBody GetFilesDetailsModel getFilesDetailsModel) {
+		
+		GetFilesDetailsDto getFilesDetailsDto = mapper.map(getFilesDetailsModel,GetFilesDetailsDto.class);
+		
+		List<FilesEntity> files = studentService.getAllFiles(getFilesDetailsDto);
+		
+		List<FilesRest> response = new ArrayList<>();
+		
+		for(FilesEntity file:files) {
+			FilesRest filesRest = mapper.map(file,FilesRest.class);
+			response.add(filesRest);
+		}
+		
+		return response;
+		
+	}
+	
+	/*----- Student Downloading The Required Files ----------*/
+	
+	@GetMapping(path = "/{studentId}/getFiles/{fileId}")
+	public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String studentId,@PathVariable String fileId){
+		
+		FilesEntity file = studentService.getFiles(fileId,studentId);
+		
+		return ResponseEntity.ok().contentType(MediaType.parseMediaType(file.getFileType()))
+							 .header(HttpHeaders.CONTENT_DISPOSITION,"attachment:filename=\""+file.getFileName()+"\"")
+							 .body(new ByteArrayResource(file.getData()));
+		
+	}
+	
+	
+	
 	
 	/*------- Teacher Controller Methods ---------*/
 	
@@ -141,6 +189,16 @@ public class UserController {
 		
 		return testEntity!=null;
 		
+	}
+	
+	
+	/*------- Teacher Uploading files -------*/
+	
+	
+	@PostMapping(path = "/{teacherId}/uploadFiles",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE},produces = {MediaType.APPLICATION_XML_VALUE,MediaType.APPLICATION_JSON_VALUE})
+	public boolean uploadFiles(@PathVariable String teacherId,@RequestParam(value = "files") MultipartFile[] files) {
+		
+		return teacherService.uploadFiles(teacherId,files);
 	}
 
 }

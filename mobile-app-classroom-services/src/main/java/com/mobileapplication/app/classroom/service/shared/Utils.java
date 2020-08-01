@@ -14,6 +14,7 @@ import com.mobileapplication.app.classroom.service.entity.TeacherEntity;
 
 @Component
 public class Utils {
+	
 
 	private final Random RANDOM = new SecureRandom();
 	private final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -21,6 +22,7 @@ public class Utils {
 	private final String REG_SALT = "DHCJIUWEHFUWHFUJHOIJIOWHEFHY489RU3498F984YF8734YF89H934HC74HFIFUIHOHIFUH19838HFH^*&%^$#%^&#$&*^)(()hgjhcy";
 	private final String SUBJECT_SALT = "mathsenglishphysicschemistrybiologyhindisciencehistorycivisgeographysocialstudiessocialscienceenvironmentsciencephysicaleducationcomputerscommerce";
 	private final String TEST_SALT = "classtestunittestsuprisetestmidtermtestendtermtesthalfyearlyfinalspreboardboardhomeboardquarterlytestsoraltexts";
+	private final String FILE_SALT = "sbdufgb38e4trf7843dhu1hd87913ghfbhho19837yghrf981hyu398dhf891yf89h1093hjd9j1980nhbv8hf98h1893yhf98y3h1498fh19834hf9834g4hf98h98yh3489fyIOXJ98QEY4F8HY2983H4F983H984FH981Hiy";
 
 	public String generateStudentId(int length) {
 		return generatedStudentId(length);
@@ -49,6 +51,11 @@ public class Utils {
 	public String GenerateTestId(int length) {
 		return generatedTestId(length);
 	}
+
+	public String GenerateFileId(int length) {
+		return generatedFilesId(length);
+	}
+
 
 	
 	
@@ -181,6 +188,17 @@ public class Utils {
 		
 		return sum/(double)studentScoresDetails.size();
 		
+	}
+	
+
+	private String generatedFilesId(int length) {
+		StringBuilder sb = new StringBuilder(length);
+
+		for (int i = 0; i < length; i++) {
+			sb.append(FILE_SALT.charAt(RANDOM.nextInt(FILE_SALT.length())));
+		}
+
+		return new String(sb);
 	}
 
 }

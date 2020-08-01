@@ -54,6 +54,9 @@ public class TeacherEntity implements Serializable {
 	@OneToMany(mappedBy = "teacherDetails", cascade = CascadeType.ALL)
 	private List<StandardEntity> standard;
 
+	@OneToMany(mappedBy = "teacherDetails", cascade = CascadeType.ALL)
+	private List<FilesEntity> fileDetails;
+
 	@ManyToOne
 	@JoinColumn(name = "organizations_id")
 	@JsonIgnore
@@ -198,6 +201,14 @@ public class TeacherEntity implements Serializable {
 
 	public void setSubjectDetails(SubjectEntity subjectDetails) {
 		this.subjectDetails = subjectDetails;
+	}
+
+	public List<FilesEntity> getFileDetails() {
+		return fileDetails;
+	}
+
+	public void setFileDetails(List<FilesEntity> fileDetails) {
+		this.fileDetails = fileDetails;
 	}
 
 	@Override

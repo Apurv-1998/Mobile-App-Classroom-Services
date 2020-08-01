@@ -1,8 +1,8 @@
 package com.mobileapplication.app.classroom.service.Service.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +15,7 @@ import com.mobileapplication.app.classroom.service.entity.SubjectEntity;
 import com.mobileapplication.app.classroom.service.entity.TestEntity;
 import com.mobileapplication.app.classroom.service.repository.StudentRepository;
 import com.mobileapplication.app.classroom.service.repository.SubjectRepository;
+import com.mobileapplication.app.classroom.service.repository.TestRepository;
 import com.mobileapplication.app.classroom.service.shared.Utils;
 
 
@@ -28,33 +29,35 @@ public class TestServiceImpl implements TestService {
 	StudentRepository studentRepository;
 	
 	@Autowired
+	TestRepository testRepository;
+	
+	@Autowired
 	Utils utils;
 
 	@Override
 	public SubjectEntity addTestScoreToSubject(TestEntity testEntity, SubjectEntity subjectEntity) {
 		
+//		System.out.println(subjectEntity);
+		
 		List<TestEntity> testEntities = subjectEntity.getTestDetails();
 		
-		if(testEntities == null) {
+		if(testEntities.size()==0) {
+//			System.out.println("Entering Here");
 			testEntities = new ArrayList<>();
 			testEntities.add(testEntity);
 			subjectEntity.setTestDetails(testEntities);
 		}
 		else {
-			for(int i=0;i<testEntities.size();i++) {
-				TestEntity entity = testEntities.get(i);
-				
-				if(entity.getTestType().equalsIgnoreCase(testEntity.getTestType())) {
-					entity.setAverageScore(utils.FindAverageScore(testEntity.getStudentScoresDetails()));
-					
-					testEntities.set(i, entity);
-					break;
-				}
-			}
+//			System.out.println("Entering Else ");
+			testEntities.add(testEntity);
 			subjectEntity.setTestDetails(testEntities);
 		}
 		
-		return subjectRepository.save(subjectEntity);
+		SubjectEntity savedSubject =  subjectRepository.save(subjectEntity);
+		
+//		System.out.println(savedSubject);
+		
+		return savedSubject;
 
 	}
 
@@ -96,8 +99,24 @@ public class TestServiceImpl implements TestService {
 			}
 			
 		}
-		System.out.println("Printing "+savedStudents);
+	//	System.out.println("Printing "+savedStudents);
 		return savedStudents;
+	}
+
+	@Override
+	public void improveService(TestEntity returnValue) {
+		
+		Iterator<TestEntity> iterator = testRepository.findAll().iterator();
+		
+		while(iterator.hasNext()) {
+			TestEntity entity = iterator.next();
+			
+			if(entity.getSubjectDetails()==null) {
+				System.out.println("Entered Here");
+				testRepository.delete(entity);
+			}
+		}
+		
 	}
 
 }
