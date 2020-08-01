@@ -39,6 +39,7 @@ public class TestEntity implements Serializable {
 	private double averageScore;
 
 	@OneToMany(mappedBy = "testDetails", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<StudentScoresEntity> studentScoresDetails;
 
 	@ManyToOne
@@ -47,6 +48,7 @@ public class TestEntity implements Serializable {
 	private SubjectEntity subjectDetails;
 
 	@ManyToMany(mappedBy = "testDetails")
+	@JsonIgnore
 	private Collection<StudentEntity> studentDetails;
 
 	public long getId() {
@@ -119,6 +121,14 @@ public class TestEntity implements Serializable {
 
 	public void setAverageScore(double averageScore) {
 		this.averageScore = averageScore;
+	}
+
+	@Override
+	public String toString() {
+		return "TestEntity [id=" + id + ", testId=" + testId + ", testType=" + testType + ", standard=" + standard
+				+ ", section=" + section + ", averageScore=" + averageScore + ", studentScoresDetails="
+				+ studentScoresDetails + ", subjectDetails=" + subjectDetails + ", studentDetails=" + studentDetails
+				+ "]";
 	}
 
 }

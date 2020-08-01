@@ -14,4 +14,6 @@ public interface TeacherRepository extends CrudRepository<TeacherEntity, Long> {
 	
 	TeacherEntity findTeachersByTeacherId(String teacherId);
 
+	List<TeacherEntity> findAllTeachersByStandard(String standard);
+
 }

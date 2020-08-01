@@ -52,7 +52,7 @@ CREATE TABLE `students` (
 
 LOCK TABLES `students` WRITE;
 /*!40000 ALTER TABLE `students` DISABLE KEYS */;
-INSERT INTO `students` VALUES (19,'12/07/1997','test@test.com',NULL,_binary '\0','gfgWYufhuEU&d43g*Rnbqy8TwHu*^e','Aarav','Male','Sirohi','12233444','ABC School','123','12233','A','X','kNFBlnw4QGkXkxVwMFx9',18);
+INSERT INTO `students` VALUES (19,'12/07/1997','test@test.com',NULL,0x00,'gfgWYufhuEU&d43g*Rnbqy8TwHu*^e','Aarav','Male','Sirohi','12233444','ABC School','123','12233','A','X','kNFBlnw4QGkXkxVwMFx9',18);
 /*!40000 ALTER TABLE `students` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -65,4 +65,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-07-31 13:22:54
+-- Dump completed on 2020-08-01 19:14:37

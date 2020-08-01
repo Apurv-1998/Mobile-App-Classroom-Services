@@ -42,7 +42,7 @@ CREATE TABLE `tests` (
 
 LOCK TABLES `tests` WRITE;
 /*!40000 ALTER TABLE `tests` DISABLE KEYS */;
-INSERT INTO `tests` VALUES (35,15,'A','X','ieeatsrlosroasuryory','unit',20),(37,0,'A','X','rpauudlrttlsessoseee','unit',20),(39,0,'A','X','stesslaraeiltbssseot','unit',20),(41,0,'A','X','dsllaydrqlistrrpprua','unit',20),(43,0,'A','X','lttfaalmhyafreyadedr','unit',20);
+INSERT INTO `tests` VALUES (219,0,'A','X','taauleostarlyiyetese','end-term',NULL),(221,0,'A','X','taauleostarlyiyetese','end-term',NULL),(223,0,'A','X','taauleostarlyiyetese','end-term',20);
 /*!40000 ALTER TABLE `tests` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -55,4 +55,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-07-31 13:22:54
+-- Dump completed on 2020-08-01 19:14:36

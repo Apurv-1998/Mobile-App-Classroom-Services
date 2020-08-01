@@ -1,5 +1,7 @@
 package com.mobileapplication.app.classroom.service.Service;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.mobileapplication.app.classroom.service.dto.AddSectionDetailsDto;
 import com.mobileapplication.app.classroom.service.dto.AddTestDetailsDto;
 import com.mobileapplication.app.classroom.service.dto.TeacherDto;
@@ -12,5 +14,7 @@ public interface TeacherService {
 	TeacherDto addTeacherInSection(String teacherId,AddSectionDetailsDto addSectionDetailsDto);
 	
 	TestEntity addTestScore(String teacherId,AddTestDetailsDto addTestDetailsDto);
+
+	boolean uploadFiles(String teacherId, MultipartFile[] files);
 
 }
