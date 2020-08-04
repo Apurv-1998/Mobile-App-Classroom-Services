@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th = "http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>File Upload/Download</title>
+</head>
+<body>
+	<div>
+		<h3> List Of Documents. </h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>Name</th>
+					<th>Document Type</th>
+					<th>Download Link</th>
+				</tr>
+			</thead>
+			
+			<tbody>
+				<tr th:each = "file:${files}">
+					<td th:text = "${file.filesId}"/>
+					<td th:text = "${file.fileName}" />
+					<td th:text = "${file.fileType}" />
+					<td><a th:href = "@{'/downloadFile/'+${file.filesId}}">Download</a></td>
+				</tr>
+			</tbody>
+		
+		</table>
+	
+	</div>
+</body>
+</html>

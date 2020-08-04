@@ -16,12 +16,34 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Dumping events for database 'classroom_app'
+-- Table structure for table `sessions_details`
 --
 
+DROP TABLE IF EXISTS `sessions_details`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `sessions_details` (
+  `id` bigint NOT NULL,
+  `section` varchar(255) NOT NULL,
+  `session_id` varchar(255) NOT NULL,
+  `session_name` varchar(255) NOT NULL,
+  `standard` varchar(255) NOT NULL,
+  `teachers_id` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FKp6ssnhb51jsukogv4cf7br9u7` (`teachers_id`),
+  CONSTRAINT `FKp6ssnhb51jsukogv4cf7br9u7` FOREIGN KEY (`teachers_id`) REFERENCES `teachers` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
 --
--- Dumping routines for database 'classroom_app'
+-- Dumping data for table `sessions_details`
 --
+
+LOCK TABLES `sessions_details` WRITE;
+/*!40000 ALTER TABLE `sessions_details` DISABLE KEYS */;
+INSERT INTO `sessions_details` VALUES (242,'A','EHFE0QOI8OVEOR08IILI','July Maths Class','X',23);
+/*!40000 ALTER TABLE `sessions_details` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -32,4 +54,4 @@
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-08-04 14:18:27
+-- Dump completed on 2020-08-04 14:18:26

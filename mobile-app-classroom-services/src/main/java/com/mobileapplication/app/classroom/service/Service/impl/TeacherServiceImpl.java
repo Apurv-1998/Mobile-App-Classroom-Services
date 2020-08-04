@@ -1,6 +1,7 @@
 package com.mobileapplication.app.classroom.service.Service.impl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -15,10 +16,13 @@ import com.mobileapplication.app.classroom.service.Service.TeacherService;
 import com.mobileapplication.app.classroom.service.Service.TestService;
 import com.mobileapplication.app.classroom.service.dto.AddSectionDetailsDto;
 import com.mobileapplication.app.classroom.service.dto.AddTestDetailsDto;
+import com.mobileapplication.app.classroom.service.dto.SessionDetailsDto;
+import com.mobileapplication.app.classroom.service.dto.SessionsDto;
 import com.mobileapplication.app.classroom.service.dto.StandardDto;
 import com.mobileapplication.app.classroom.service.dto.StudentScoresDto;
 import com.mobileapplication.app.classroom.service.dto.TeacherDto;
 import com.mobileapplication.app.classroom.service.entity.FilesEntity;
+import com.mobileapplication.app.classroom.service.entity.SessionDetailsEntity;
 import com.mobileapplication.app.classroom.service.entity.StandardEntity;
 import com.mobileapplication.app.classroom.service.entity.StudentEntity;
 import com.mobileapplication.app.classroom.service.entity.SubjectEntity;
@@ -26,6 +30,8 @@ import com.mobileapplication.app.classroom.service.entity.TeacherEntity;
 import com.mobileapplication.app.classroom.service.entity.TestEntity;
 import com.mobileapplication.app.classroom.service.repository.FilesRepository;
 import com.mobileapplication.app.classroom.service.repository.OrganizationRepository;
+import com.mobileapplication.app.classroom.service.repository.SessionDetailsRepository;
+import com.mobileapplication.app.classroom.service.repository.SessionsRepository;
 import com.mobileapplication.app.classroom.service.repository.StudentRepository;
 import com.mobileapplication.app.classroom.service.repository.SubjectRepository;
 import com.mobileapplication.app.classroom.service.repository.TeacherRepository;
@@ -56,6 +62,12 @@ public class TeacherServiceImpl implements TeacherService {
 	
 	@Autowired
 	SubjectRepository subjectRepository;
+	
+	@Autowired
+	SessionDetailsRepository sessionDetailsRepository;
+	
+	@Autowired
+	SessionsRepository sessionsRepository;
 	
 	@Autowired
 	OrganizationService organizationService;
@@ -265,6 +277,77 @@ public class TeacherServiceImpl implements TeacherService {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	@Override
+	public List<FilesEntity> getAllFiles() {
+		List<FilesEntity> files = new ArrayList<>();
+		
+		Iterator<FilesEntity> iterator =  filesRepository.findAll().iterator();
+		
+		while(iterator.hasNext())
+			files.add(iterator.next());
+		return files;
+	}
+
+	@Override
+	public SessionDetailsDto addSessionDetails(String teacherId, SessionDetailsDto sessionDetailsDto) {
+		
+		TeacherEntity teacher = teacherRepository.findTeachersByTeacherId(teacherId);
+		
+		//Adding Standard Check
+		boolean flag = false;
+		
+		String teacherStandard = sessionDetailsDto.getStandard()+" "+sessionDetailsDto.getSection();
+		
+		List<StandardEntity> standards = teacher.getStandard();
+		
+		for(StandardEntity standardEntity:standards) {
+			String standard = standardEntity.getStandardName()+" "+standardEntity.getSection();
+			
+			if(standard.equalsIgnoreCase(teacherStandard)) {
+				flag = true;
+				break;
+			}
+		}
+		
+		if(!flag)
+			throw new RuntimeException(teacher.getFirstName()+" "+teacher.getLastname()+" Is Not Associated With The Section");
+		
+		
+		List<SessionsDto> sessionsDto = sessionDetailsDto.getSessions();
+		
+		for(int i=0;i<sessionsDto.size();i++) {
+			SessionsDto sessions = sessionsDto.get(i);
+			
+			sessions.setSessionsId(utils.GenerateSessionsId(10));
+			sessions.setSessionsPassword(utils.GenerateSessionsPassword(10));
+			
+			sessions.setSessionDetails(sessionDetailsDto);
+			
+			sessionsDto.set(i, sessions);
+		}
+		
+		sessionDetailsDto.setSessions(sessionsDto);
+		
+		SessionDetailsEntity sessionDetailsEntity = mapper.map(sessionDetailsDto,SessionDetailsEntity.class);
+		
+		sessionDetailsEntity.setSessionId(utils.GenerateSessionDetailsId(20));
+		
+		sessionDetailsEntity.setTeacherDetails(teacher);
+		
+		SessionDetailsEntity savedEntity = sessionDetailsRepository.save(sessionDetailsEntity);
+		
+		
+		List<SessionDetailsEntity> entity = teacher.getSessionDetails();
+		entity.add(savedEntity);
+		teacher.setSessionDetails(entity);
+		teacherRepository.save(teacher);
+		
+		return mapper.map(savedEntity,SessionDetailsDto.class);
+		
+		
+		
 	}
 
 }

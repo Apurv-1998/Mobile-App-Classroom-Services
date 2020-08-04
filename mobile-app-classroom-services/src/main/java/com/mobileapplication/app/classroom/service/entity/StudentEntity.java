@@ -59,19 +59,24 @@ public class StudentEntity implements Serializable {
 	@Column(nullable = false)
 	private String encryptedPassword;
 
+	@Column(nullable = true)
+	private String loginTime;
+	@Column(nullable = true)
+	private String logoutTime;
+
+	private boolean isSignedIn = false;
+
 	@ManyToOne
 	@JoinColumn(name = "organizations_id")
 	@JsonIgnore
 	private OrganizationEntity organizationDetails;
-	
-	@ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-	@JoinTable(name = "students_subjects",
-	           joinColumns = @JoinColumn(name = "students_id",referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "subjects_id",referencedColumnName = "id"))
+
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinTable(name = "students_subjects", joinColumns = @JoinColumn(name = "students_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "subjects_id", referencedColumnName = "id"))
 	private Collection<SubjectEntity> subjectDetails;
-	
+
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "students_tests",
-			   joinColumns = @JoinColumn(name = "students_id",referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tests_id",referencedColumnName = "id"))
+	@JoinTable(name = "students_tests", joinColumns = @JoinColumn(name = "students_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tests_id", referencedColumnName = "id"))
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Collection<TestEntity> testDetails;
 
@@ -225,6 +230,30 @@ public class StudentEntity implements Serializable {
 
 	public void setTestDetails(Collection<TestEntity> testDetails) {
 		this.testDetails = testDetails;
+	}
+
+	public String getLogoutTime() {
+		return logoutTime;
+	}
+
+	public void setLogoutTime(String logoutTime) {
+		this.logoutTime = logoutTime;
+	}
+
+	public void setLoginTime(String loginTime) {
+		this.loginTime = loginTime;
+	}
+
+	public String getLoginTime() {
+		return loginTime;
+	}
+
+	public boolean isSignedIn() {
+		return isSignedIn;
+	}
+
+	public void setSignedIn(boolean isSignedIn) {
+		this.isSignedIn = isSignedIn;
 	}
 
 }

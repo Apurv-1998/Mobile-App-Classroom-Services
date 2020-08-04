@@ -1,7 +1,9 @@
 package com.mobileapplication.app.classroom.service.Service.impl;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -16,16 +18,20 @@ import com.mobileapplication.app.classroom.service.dto.StudentDto;
 import com.mobileapplication.app.classroom.service.dto.StudentLoginDto;
 import com.mobileapplication.app.classroom.service.entity.FilesEntity;
 import com.mobileapplication.app.classroom.service.entity.OrganizationEntity;
+import com.mobileapplication.app.classroom.service.entity.SessionDetailsEntity;
 import com.mobileapplication.app.classroom.service.entity.StandardEntity;
 import com.mobileapplication.app.classroom.service.entity.StudentEntity;
 import com.mobileapplication.app.classroom.service.entity.SubjectEntity;
 import com.mobileapplication.app.classroom.service.entity.TeacherEntity;
 import com.mobileapplication.app.classroom.service.repository.FilesRepository;
 import com.mobileapplication.app.classroom.service.repository.OrganizationRepository;
+import com.mobileapplication.app.classroom.service.repository.SessionDetailsRepository;
+import com.mobileapplication.app.classroom.service.repository.SessionsRepository;
 import com.mobileapplication.app.classroom.service.repository.StandardRepository;
 import com.mobileapplication.app.classroom.service.repository.StudentRepository;
 import com.mobileapplication.app.classroom.service.repository.SubjectRepository;
 import com.mobileapplication.app.classroom.service.repository.TeacherRepository;
+import com.mobileapplication.app.classroom.service.response.model.SessionsRest;
 import com.mobileapplication.app.classroom.service.shared.Utils;
 
 @Service
@@ -56,6 +62,12 @@ public class StudentServiceImpl implements StudentService {
 	FilesRepository filesRepository;
 	
 	@Autowired
+	SessionDetailsRepository sessionDetailsRepository;
+	
+	@Autowired
+	SessionsRepository sessionsRepository;
+	
+	@Autowired
 	Utils utils;
 	
 	@Override
@@ -84,7 +96,7 @@ public class StudentServiceImpl implements StudentService {
 	}
 
 	@Override
-	public boolean loginStudent(StudentLoginDto loginDto) {
+	public boolean loginStudent(StudentLoginDto loginDto) throws ParseException {
 		boolean returnValue = false;
 		
 		
@@ -99,10 +111,15 @@ public class StudentServiceImpl implements StudentService {
 		
 		StudentEntity student_found = studentRepository.findStudentByEmail(user_mail);
 		
-		if(student_found==null || !student_found.getPassword().equals(user_password) || !student_found.getOrganization().equals(organization_name))
+		if(student_found==null || !student_found.getPassword().equals(user_password) || !student_found.getOrganization().equals(organization_name) || student_found.isSignedIn())
 			return returnValue;
-		else
+		else {
+			student_found.setLoginTime(utils.ManageDate(System.currentTimeMillis()));
+			student_found.setLogoutTime("00000000");
+			student_found.setSignedIn(true);
+			studentRepository.save(student_found);
 			returnValue = true;
+		}
 		
 		
 		return returnValue;
@@ -212,6 +229,69 @@ public class StudentServiceImpl implements StudentService {
 		FilesEntity entity = filesRepository.findAllFilesByFilesId(fileId);
 		
 		return entity;
+	}
+
+	@Override
+	public LinkedHashMap<String, List<List<SessionsRest>>> getAllSessions(String studentId) {
+	
+		StudentEntity student = studentRepository.findStudentByStudentId(studentId);
+		
+		List<SessionDetailsEntity> sessionDetailsEntity = sessionDetailsRepository.findSessionsByStandardAndSection(student.getStandard(),student.getSection());
+		
+		
+		LinkedHashMap<String,List<List<SessionsRest>>> map = new LinkedHashMap<>();
+		
+		for(SessionDetailsEntity session:sessionDetailsEntity) {
+			
+			String subject = session.getTeacherDetails().getSubject();
+			
+			if(map.containsKey(subject)) {
+				List<List<SessionsRest>> list = map.get(subject);
+				
+				list.add(utils.getSessionsRestFromSessionDetails(session));
+				
+				map.put(subject,list);
+				
+			}
+			else {
+				List<List<SessionsRest>> list = new ArrayList<>();
+				
+				list.add(utils.getSessionsRestFromSessionDetails(session));
+				
+				map.put(subject,list);
+			}
+			
+		}
+		
+		return map;
+		
+		
+	}
+
+	@Override
+	public boolean performSignout(String studentId) {
+		boolean returnValue = false;
+		
+		StudentEntity entity = studentRepository.findStudentByStudentId(studentId);
+		
+		if(entity==null)
+			throw new RuntimeException("Studnt With StudentId -> "+studentId+" Does Not Exist");
+		
+		if(!entity.isSignedIn())
+			return returnValue;
+		
+		else {
+			try {
+				returnValue = true;
+				entity.setSignedIn(false);
+				entity.setLogoutTime(utils.ManageDate(System.currentTimeMillis()));
+				studentRepository.save(entity);
+			}catch(Exception e) {
+				return returnValue;
+			}
+		}
+		
+		return returnValue;
 	}
 
 }
