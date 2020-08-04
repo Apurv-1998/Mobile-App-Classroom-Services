@@ -53,7 +53,7 @@ CREATE TABLE `teachers` (
 
 LOCK TABLES `teachers` WRITE;
 /*!40000 ALTER TABLE `teachers` DISABLE KEYS */;
-INSERT INTO `teachers` VALUES (23,'12/07/1978','teacher@teacher.com',0x00,NULL,'9)Hh4*4HC&7jI(OOHWF$','q7^&&fYd8R*bg98yh8Dy^&&j^y*dIh','Brijesh','Sharma','ABC School','abc','StX1223','maths','so83oQoecvpMV0BX8o2A',18,20),(24,'12/07/1978','teacher@teacher.com',0x00,NULL,'CWHIFIDH(3HI3HFJH%HH','*eTyigTE&b%8&7uG77yd*&&d^3T*&R','Brijesh','Sharma','ABC School','abc','StX1223','maths','ApTGgOxdjPaQla1UIpew',18,20),(27,'12/07/1978','teacher@teacher.com',0x00,NULL,'F448I^y91YIW*IHHE9D^','dYhThq^iy&*eyn8^tYhWrgq88Iw*hE','Shalini','Sharma','ABC School','abc','StX1223','maths','aeFqJY9TJNpFaWiRj22G',18,20),(34,'12/07/1978','teacher@teacher.com',0x00,NULL,'^cI7W$$YIH(^7J9*J(HW','Dhfed*&oD3Teg32q8nY*Y^yTfy8YIU','Malini','Sharma','ABC School','abc','StX1223','physics','589R3JRYz2kp8S3h5C49',18,30);
+INSERT INTO `teachers` VALUES (23,'12/07/1978','teacher@teacher.com',_binary '\0',NULL,'9)Hh4*4HC&7jI(OOHWF$','q7^&&fYd8R*bg98yh8Dy^&&j^y*dIh','Brijesh','Sharma','ABC School','abc','StX1223','maths','so83oQoecvpMV0BX8o2A',18,20),(24,'12/07/1978','teacher@teacher.com',_binary '\0',NULL,'CWHIFIDH(3HI3HFJH%HH','*eTyigTE&b%8&7uG77yd*&&d^3T*&R','Brijesh','Sharma','ABC School','abc','StX1223','maths','ApTGgOxdjPaQla1UIpew',18,20),(27,'12/07/1978','teacher@teacher.com',_binary '\0',NULL,'F448I^y91YIW*IHHE9D^','dYhThq^iy&*eyn8^tYhWrgq88Iw*hE','Shalini','Sharma','ABC School','abc','StX1223','maths','aeFqJY9TJNpFaWiRj22G',18,20),(34,'12/07/1978','teacher@teacher.com',_binary '\0',NULL,'^cI7W$$YIH(^7J9*J(HW','Dhfed*&oD3Teg32q8nY*Y^yTfy8YIU','Malini','Sharma','ABC School','abc','StX1223','physics','589R3JRYz2kp8S3h5C49',18,30);
 /*!40000 ALTER TABLE `teachers` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -66,4 +66,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-08-01 19:14:39
+-- Dump completed on 2020-08-04 14:18:27
