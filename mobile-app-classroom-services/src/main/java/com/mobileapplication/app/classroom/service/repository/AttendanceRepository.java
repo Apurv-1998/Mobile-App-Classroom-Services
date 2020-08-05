@@ -1,14 +1,11 @@
 package com.mobileapplication.app.classroom.service.repository;
 
-import java.util.Date;
-
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import com.mobileapplication.app.classroom.service.entity.SessionsEntity;
-
+import com.mobileapplication.app.classroom.service.entity.AttendanceEntity;
 
 @Repository
-public interface SessionsRepository extends CrudRepository<SessionsEntity, Long> {
+public interface AttendanceRepository extends CrudRepository<AttendanceEntity, Long> {
 
 }

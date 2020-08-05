@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -39,6 +40,18 @@ public class SessionsEntity implements Serializable {
 	@JoinColumn(name = "sessions_details_id")
 	@JsonIgnore
 	private SessionDetailsEntity sessionDetails;
+
+	@OneToOne
+	@JoinColumn(name = "attendance_id")
+	private AttendanceEntity attendanceDetails;
+
+	public AttendanceEntity getAttendanceDetails() {
+		return attendanceDetails;
+	}
+
+	public void setAttendanceDetails(AttendanceEntity attendanceDetails) {
+		this.attendanceDetails = attendanceDetails;
+	}
 
 	public long getId() {
 		return id;

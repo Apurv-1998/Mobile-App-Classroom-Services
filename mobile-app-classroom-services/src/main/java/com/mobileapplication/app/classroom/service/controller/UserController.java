@@ -26,6 +26,7 @@ import com.mobileapplication.app.classroom.service.Service.TeacherService;
 import com.mobileapplication.app.classroom.service.dto.AddSectionDetailsDto;
 import com.mobileapplication.app.classroom.service.dto.AddSubjectDto;
 import com.mobileapplication.app.classroom.service.dto.AddTestDetailsDto;
+import com.mobileapplication.app.classroom.service.dto.AttendanceDto;
 import com.mobileapplication.app.classroom.service.dto.GetFilesDetailsDto;
 import com.mobileapplication.app.classroom.service.dto.SessionDetailsDto;
 import com.mobileapplication.app.classroom.service.dto.StudentDto;
@@ -35,24 +36,27 @@ import com.mobileapplication.app.classroom.service.entity.FilesEntity;
 import com.mobileapplication.app.classroom.service.entity.TestEntity;
 import com.mobileapplication.app.classroom.service.request.model.AddSectionDetailsModel;
 import com.mobileapplication.app.classroom.service.request.model.AddTestScoreRequestDetailsModel;
+import com.mobileapplication.app.classroom.service.request.model.AttendanceDetailsModel;
 import com.mobileapplication.app.classroom.service.request.model.CreateStudentsRequestDetailsModel;
 import com.mobileapplication.app.classroom.service.request.model.CreateTeacherRequestDetailsModel;
 import com.mobileapplication.app.classroom.service.request.model.GetFilesDetailsModel;
 import com.mobileapplication.app.classroom.service.request.model.SessionDetailsModel;
 import com.mobileapplication.app.classroom.service.request.model.StudentLoginDetails;
 import com.mobileapplication.app.classroom.service.request.model.SubjectDetailsModel;
+import com.mobileapplication.app.classroom.service.response.model.AttendanceRest;
 import com.mobileapplication.app.classroom.service.response.model.FilesRest;
 import com.mobileapplication.app.classroom.service.response.model.SessionDetailsRest;
 import com.mobileapplication.app.classroom.service.response.model.SessionsRest;
 import com.mobileapplication.app.classroom.service.response.model.StudentRest;
 import com.mobileapplication.app.classroom.service.response.model.TeacherRest;
+import com.mobileapplication.app.classroom.service.shared.Utils;
 
 @RestController
 @RequestMapping("/classroom")
 public class UserController {
 	
-
-	
+	@Autowired
+	Utils utils;
 	
 	@Autowired
 	StudentService studentService;
@@ -156,14 +160,29 @@ public class UserController {
 	
 	/*-------------- Getting all the sessions for their classes -----------------*/
 	
-	@GetMapping(path = "/students/{studentId}/getSessions")
+	@GetMapping(path = "/students/{studentId}/getSessions",produces = {MediaType.APPLICATION_XML_VALUE,MediaType.APPLICATION_JSON_VALUE})
 	public LinkedHashMap<String, List<List<SessionsRest>>> getAllSessions(@PathVariable String studentId) {
 		
 		return studentService.getAllSessions(studentId);
 		
 	}
 	
+	/*---- Getting The Attendance Percentage -----*/
 	
+	@GetMapping(path = "/students/{studentId}/getAttendance")
+	public AttendanceRest getAttendance(@PathVariable String studentId,@RequestParam(name = "subject") String subject) {
+		
+		ArrayList attendance = studentService.getAttendancePercentage(studentId,subject);
+		
+		AttendanceRest response  =new AttendanceRest();
+		
+		response.setSubject(subject);
+		response.setAttendance((double)attendance.get(0));
+		response.setNumber_of_classes_to_attain_threshold(utils.CalculateNumberOfClassesToAttainThreshold(attendance));
+		
+		return response;
+		
+	}
 	
 	
 	/*------- Teacher Controller Methods ---------*/
@@ -231,7 +250,7 @@ public class UserController {
 	}
 	
 	
-	/*----- Teacher Mark Attendance --------*/
+	/*----- Teacher Mark Sessions --------*/
 	
 	@PostMapping(path = "/teachers/{teacherId}/addSessions",produces = {MediaType.APPLICATION_XML_VALUE,MediaType.APPLICATION_JSON_VALUE})
 	public SessionDetailsRest addSessions(@PathVariable String teacherId,@RequestBody SessionDetailsModel sessionDetailsModel) {
@@ -243,6 +262,17 @@ public class UserController {
 		SessionDetailsRest response = mapper.map(savedDto,SessionDetailsRest.class);
 		
 		return response;
+		
+	}
+	
+	/*---- Teacher Marking The Attendance -------*/
+	
+	@PostMapping(path = "teachers/{teacherId}/markAttendance",produces = {MediaType.APPLICATION_XML_VALUE,MediaType.APPLICATION_JSON_VALUE})
+	public void markAttendance(@PathVariable String teacherId,@RequestBody AttendanceDetailsModel attendanceDetailsModel) {
+		
+		AttendanceDto attendanceDto = mapper.map(attendanceDetailsModel,AttendanceDto.class);
+		
+		teacherService.markAttendance(teacherId,attendanceDto);
 		
 	}
 

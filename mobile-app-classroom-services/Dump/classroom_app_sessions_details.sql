@@ -41,7 +41,7 @@ CREATE TABLE `sessions_details` (
 
 LOCK TABLES `sessions_details` WRITE;
 /*!40000 ALTER TABLE `sessions_details` DISABLE KEYS */;
-INSERT INTO `sessions_details` VALUES (242,'A','EHFE0QOI8OVEOR08IILI','July Maths Class','X',23);
+INSERT INTO `sessions_details` VALUES (254,'A','0NHI4QE9INUN4W4IFEH8','July Maths Class','X',23),(264,'A','4IUE3EUIOQRHNEREFHEE','July Maths Class','X',23);
 /*!40000 ALTER TABLE `sessions_details` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -54,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-08-04 14:18:26
+-- Dump completed on 2020-08-05 14:41:37

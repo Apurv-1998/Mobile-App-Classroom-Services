@@ -1,6 +1,7 @@
 package com.mobileapplication.app.classroom.service.shared;
 
 import java.security.SecureRandom;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import com.mobileapplication.app.classroom.service.entity.StandardEntity;
 import com.mobileapplication.app.classroom.service.entity.StudentEntity;
 import com.mobileapplication.app.classroom.service.entity.StudentScoresEntity;
 import com.mobileapplication.app.classroom.service.entity.TeacherEntity;
+import com.mobileapplication.app.classroom.service.response.model.AttendanceRest;
 import com.mobileapplication.app.classroom.service.response.model.SessionsRest;
 
 @Component
@@ -266,11 +268,52 @@ public class Utils {
 	}
 
 	public String ManageDate(long currentTimeMillis) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd hh:mm:ss");
+		Date date = new Date(currentTimeMillis);
 		
-		Date returnValue = new Date(currentTimeMillis);
+		DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
 		
-		return sdf.format(returnValue);
+		return formatter.format(date);
+	}
+
+	public String ExtractTimeFromDate(String loginTime) {
+		
+		try {
+			Date date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(loginTime);
+			
+			return new SimpleDateFormat("hh:mm").format(date);
+			
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public String HandleDate(Date date) {
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		
+		return formatter.format(date);
+	}
+
+	public int ComparableTimes(String entered_class) {
+		
+		String[] str = entered_class.split(":");
+		
+		return 60*Integer.parseInt(str[0])+Integer.parseInt(str[1]);
+		
+	}
+
+	public int CalculateNumberOfClassesToAttainThreshold(ArrayList attendance) {
+		
+		int numberOfClassesDone = (int)attendance.get(1);
+		
+		double percentage = (double)attendance.get(0);
+		
+		if(AttendanceRest.THRESHOLD>=percentage)
+			return 0;
+		else {
+			double ans = (numberOfClassesDone*AttendanceRest.THRESHOLD)/percentage;
+			return (int)Math.round(ans);
+		}
 	}
 
 }

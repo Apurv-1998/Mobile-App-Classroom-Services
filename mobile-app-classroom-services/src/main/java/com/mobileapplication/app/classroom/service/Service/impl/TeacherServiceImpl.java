@@ -11,27 +11,33 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.mobileapplication.app.classroom.service.Service.OrganizationService;
 import com.mobileapplication.app.classroom.service.Service.StandardService;
+import com.mobileapplication.app.classroom.service.Service.StudentService;
 import com.mobileapplication.app.classroom.service.Service.SubjectService;
 import com.mobileapplication.app.classroom.service.Service.TeacherService;
 import com.mobileapplication.app.classroom.service.Service.TestService;
 import com.mobileapplication.app.classroom.service.dto.AddSectionDetailsDto;
 import com.mobileapplication.app.classroom.service.dto.AddTestDetailsDto;
+import com.mobileapplication.app.classroom.service.dto.AttendanceDto;
 import com.mobileapplication.app.classroom.service.dto.SessionDetailsDto;
 import com.mobileapplication.app.classroom.service.dto.SessionsDto;
 import com.mobileapplication.app.classroom.service.dto.StandardDto;
 import com.mobileapplication.app.classroom.service.dto.StudentScoresDto;
 import com.mobileapplication.app.classroom.service.dto.TeacherDto;
+import com.mobileapplication.app.classroom.service.entity.AttendanceEntity;
 import com.mobileapplication.app.classroom.service.entity.FilesEntity;
 import com.mobileapplication.app.classroom.service.entity.SessionDetailsEntity;
+import com.mobileapplication.app.classroom.service.entity.SessionsEntity;
 import com.mobileapplication.app.classroom.service.entity.StandardEntity;
 import com.mobileapplication.app.classroom.service.entity.StudentEntity;
 import com.mobileapplication.app.classroom.service.entity.SubjectEntity;
 import com.mobileapplication.app.classroom.service.entity.TeacherEntity;
 import com.mobileapplication.app.classroom.service.entity.TestEntity;
+import com.mobileapplication.app.classroom.service.repository.AttendanceRepository;
 import com.mobileapplication.app.classroom.service.repository.FilesRepository;
 import com.mobileapplication.app.classroom.service.repository.OrganizationRepository;
 import com.mobileapplication.app.classroom.service.repository.SessionDetailsRepository;
 import com.mobileapplication.app.classroom.service.repository.SessionsRepository;
+import com.mobileapplication.app.classroom.service.repository.StandardRepository;
 import com.mobileapplication.app.classroom.service.repository.StudentRepository;
 import com.mobileapplication.app.classroom.service.repository.SubjectRepository;
 import com.mobileapplication.app.classroom.service.repository.TeacherRepository;
@@ -70,6 +76,12 @@ public class TeacherServiceImpl implements TeacherService {
 	SessionsRepository sessionsRepository;
 	
 	@Autowired
+	AttendanceRepository attendanceRepository;
+	
+	@Autowired
+	StandardRepository standardRepository;
+	
+	@Autowired
 	OrganizationService organizationService;
 	
 	@Autowired
@@ -80,6 +92,9 @@ public class TeacherServiceImpl implements TeacherService {
 	
 	@Autowired
 	TestService testService;
+	
+	@Autowired
+	StudentService studentService;
 	
 	@Autowired
 	Utils utils;
@@ -347,6 +362,97 @@ public class TeacherServiceImpl implements TeacherService {
 		return mapper.map(savedEntity,SessionDetailsDto.class);
 		
 		
+		
+	}
+
+	@Override
+	public void markAttendance(String teacherId,AttendanceDto attendanceDto) {
+		
+		String date = utils.HandleDate(attendanceDto.getDate());
+		
+		String intendedStandard = attendanceDto.getStandard()+" "+attendanceDto.getSection();
+		
+		TeacherEntity teacher = teacherRepository.findTeachersByTeacherId(teacherId);
+		
+		boolean flag = false;
+		
+		List<StandardEntity> standards =  teacher.getStandard();
+		
+		for(StandardEntity standard:standards) {
+			String standardString = standard.getStandardName()+" "+standard.getSection();
+			
+			if(intendedStandard.equalsIgnoreCase(standardString)) {
+				flag = true;
+				break;
+			}
+		}
+		
+		if(!flag)
+			return;
+		
+		// Getting the session for that teacher on the entered date
+		
+		
+		List<SessionDetailsEntity> sessionDetails = new ArrayList<>();
+		
+		List<SessionDetailsEntity> sessionsDetails = teacher.getSessionDetails();
+		
+		
+		for(SessionDetailsEntity entity:sessionsDetails) {
+			String standard = entity.getStandard()+" "+entity.getSection();
+			
+			if(standard.equalsIgnoreCase(intendedStandard))
+				sessionDetails.add(entity);
+		}
+		
+		SessionsEntity requiredSession  = null;
+		
+		flag = false;
+		
+		for(int i=0;i<sessionDetails.size();i++) {
+			
+			List<SessionsEntity> entity = sessionDetails.get(i).getSessions();
+			
+			for(SessionsEntity session:entity) {
+				
+				String session_date = utils.HandleDate(session.getSessionDate());
+				
+				System.out.println(date+" "+session_date);
+				
+				if(session_date.equals(date)){
+					requiredSession = session;
+					flag = true;
+					break;
+				}
+			}
+			if(flag)
+				break;
+			
+		}
+		
+		if(!flag || requiredSession==null)
+			return;
+		
+		
+		
+		AttendanceEntity attendanceEntity = mapper.map(attendanceDto,AttendanceEntity.class);
+		
+//		attendanceEntity.setAttendanceId(utils.GenerateAttendanceId(20));
+		
+		
+		List<AttendanceEntity> list = studentService.markStudentAttendance(attendanceEntity,requiredSession,attendanceEntity.getStandard(),attendanceEntity.getSection());
+		
+		
+		List<StandardEntity> standard_s = standardRepository.findStandardByStandardNameAndSection(attendanceEntity.getStandard(),attendanceEntity.getSection());
+		
+		for(StandardEntity standard:standard_s) {
+			standard.setAttendanceDetails(list);
+			
+			standardRepository.save(standard);
+			
+			attendanceEntity.setStandardDetails(standard);
+			attendanceRepository.save(attendanceEntity);
+		}
 		
 	}
 

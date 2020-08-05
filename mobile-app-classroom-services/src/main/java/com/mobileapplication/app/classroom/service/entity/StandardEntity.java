@@ -2,6 +2,7 @@ package com.mobileapplication.app.classroom.service.entity;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -28,14 +30,17 @@ public class StandardEntity implements Serializable {
 	private String standardName;
 	@Column(nullable = false)
 	private String section;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "teachers_id")
 	@JsonIgnore
 	private TeacherEntity teacherDetails;
-	
+
 	@ManyToMany(mappedBy = "standardDetails")
 	private Collection<SubjectEntity> subjectDetails;
+
+	@OneToMany(mappedBy = "standardDetails")
+	private List<AttendanceEntity> attendanceDetails;
 
 	public long getId() {
 		return id;
@@ -69,5 +74,20 @@ public class StandardEntity implements Serializable {
 		this.teacherDetails = teacherDetails;
 	}
 
+	public Collection<SubjectEntity> getSubjectDetails() {
+		return subjectDetails;
+	}
+
+	public void setSubjectDetails(Collection<SubjectEntity> subjectDetails) {
+		this.subjectDetails = subjectDetails;
+	}
+
+	public List<AttendanceEntity> getAttendanceDetails() {
+		return attendanceDetails;
+	}
+
+	public void setAttendanceDetails(List<AttendanceEntity> attendanceDetails) {
+		this.attendanceDetails = attendanceDetails;
+	}
 
 }

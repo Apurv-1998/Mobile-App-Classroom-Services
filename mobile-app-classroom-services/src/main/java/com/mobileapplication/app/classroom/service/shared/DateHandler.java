@@ -26,7 +26,7 @@ public class DateHandler extends StdDeserializer<Date> {
 		String date = jsonParser.getText();
 		
 		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			return sdf.parse(date);
 			
 		}catch(Exception e) {

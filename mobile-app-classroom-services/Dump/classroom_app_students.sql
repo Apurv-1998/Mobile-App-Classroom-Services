@@ -40,11 +40,14 @@ CREATE TABLE `students` (
   `standard` varchar(255) NOT NULL,
   `student_id` varchar(255) NOT NULL,
   `organizations_id` bigint DEFAULT NULL,
-  `login_time` datetime(6) NOT NULL,
-  `logout_time` datetime(6) NOT NULL,
   `is_signed_in` bit(1) NOT NULL,
+  `attendance_id` bigint DEFAULT NULL,
+  `login_time` varchar(255) DEFAULT NULL,
+  `logout_time` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FKqr4k8xsgsva40mhwnp3jj4i1v` (`organizations_id`),
+  KEY `FK9kygugacl2pjrhgvjce4wgmho` (`attendance_id`),
+  CONSTRAINT `FK9kygugacl2pjrhgvjce4wgmho` FOREIGN KEY (`attendance_id`) REFERENCES `attendance` (`id`),
   CONSTRAINT `FKqr4k8xsgsva40mhwnp3jj4i1v` FOREIGN KEY (`organizations_id`) REFERENCES `organizations` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -55,7 +58,7 @@ CREATE TABLE `students` (
 
 LOCK TABLES `students` WRITE;
 /*!40000 ALTER TABLE `students` DISABLE KEYS */;
-INSERT INTO `students` VALUES (19,'12/07/1997','test@test.com',NULL,_binary '\0','gfgWYufhuEU&d43g*Rnbqy8TwHu*^e','Aarav','Male','Sirohi','12233444','ABC School','123','12233','A','X','kNFBlnw4QGkXkxVwMFx9',18,'2020-08-04 01:39:55.000000','2020-08-04 01:39:58.000000',_binary '\0');
+INSERT INTO `students` VALUES (19,'12/07/1997','test@test.com',NULL,_binary '\0','gfgWYufhuEU&d43g*Rnbqy8TwHu*^e','Aarav','Male','Sirohi','12233444','ABC School','123','12233','A','X','kNFBlnw4QGkXkxVwMFx9',18,_binary '\0',267,'14:21:38','14:21:45');
 /*!40000 ALTER TABLE `students` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -68,4 +71,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-08-04 14:18:25
+-- Dump completed on 2020-08-05 14:41:36
