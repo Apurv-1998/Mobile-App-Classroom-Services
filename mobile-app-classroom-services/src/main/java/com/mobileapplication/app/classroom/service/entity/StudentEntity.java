@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.LazyCollection;
@@ -79,6 +80,10 @@ public class StudentEntity implements Serializable {
 	@JoinTable(name = "students_tests", joinColumns = @JoinColumn(name = "students_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tests_id", referencedColumnName = "id"))
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Collection<TestEntity> testDetails;
+
+	@OneToOne
+	@JoinColumn(name = "attendance_id")
+	private AttendanceEntity attendanceDetails;
 
 	public long getId() {
 		return id;
@@ -254,6 +259,14 @@ public class StudentEntity implements Serializable {
 
 	public void setSignedIn(boolean isSignedIn) {
 		this.isSignedIn = isSignedIn;
+	}
+
+	public AttendanceEntity getAttendanceDetails() {
+		return attendanceDetails;
+	}
+
+	public void setAttendanceDetails(AttendanceEntity attendanceDetails) {
+		this.attendanceDetails = attendanceDetails;
 	}
 
 }

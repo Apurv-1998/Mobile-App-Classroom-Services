@@ -3,6 +3,7 @@ package com.mobileapplication.app.classroom.service.Service.impl;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -16,13 +17,16 @@ import com.mobileapplication.app.classroom.service.dto.AddSubjectDto;
 import com.mobileapplication.app.classroom.service.dto.GetFilesDetailsDto;
 import com.mobileapplication.app.classroom.service.dto.StudentDto;
 import com.mobileapplication.app.classroom.service.dto.StudentLoginDto;
+import com.mobileapplication.app.classroom.service.entity.AttendanceEntity;
 import com.mobileapplication.app.classroom.service.entity.FilesEntity;
 import com.mobileapplication.app.classroom.service.entity.OrganizationEntity;
 import com.mobileapplication.app.classroom.service.entity.SessionDetailsEntity;
+import com.mobileapplication.app.classroom.service.entity.SessionsEntity;
 import com.mobileapplication.app.classroom.service.entity.StandardEntity;
 import com.mobileapplication.app.classroom.service.entity.StudentEntity;
 import com.mobileapplication.app.classroom.service.entity.SubjectEntity;
 import com.mobileapplication.app.classroom.service.entity.TeacherEntity;
+import com.mobileapplication.app.classroom.service.repository.AttendanceRepository;
 import com.mobileapplication.app.classroom.service.repository.FilesRepository;
 import com.mobileapplication.app.classroom.service.repository.OrganizationRepository;
 import com.mobileapplication.app.classroom.service.repository.SessionDetailsRepository;
@@ -66,6 +70,9 @@ public class StudentServiceImpl implements StudentService {
 	
 	@Autowired
 	SessionsRepository sessionsRepository;
+	
+	@Autowired
+	AttendanceRepository attendanceRepository;
 	
 	@Autowired
 	Utils utils;
@@ -115,7 +122,7 @@ public class StudentServiceImpl implements StudentService {
 			return returnValue;
 		else {
 			student_found.setLoginTime(utils.ManageDate(System.currentTimeMillis()));
-			student_found.setLogoutTime("00000000");
+			student_found.setLogoutTime(null);
 			student_found.setSignedIn(true);
 			studentRepository.save(student_found);
 			returnValue = true;
@@ -292,6 +299,101 @@ public class StudentServiceImpl implements StudentService {
 		}
 		
 		return returnValue;
+	}
+
+	@Override
+	public List<AttendanceEntity> markStudentAttendance(AttendanceEntity attendanceEntity, SessionsEntity session,String standard,String section) {
+		
+		List<StudentEntity> students_in_class = studentRepository.findStudentsByStandardAndSection(standard,section);
+		
+		System.out.println(students_in_class.size());
+		
+		List<AttendanceEntity> list = new ArrayList<>();
+		
+		String session_start_time = session.getStartTime();
+		String session_end_time = session.getEndTime();
+		
+		for(StudentEntity entity:students_in_class) {
+			
+			String entered_class = entity.getLoginTime();
+			String exit_class = entity.getLogoutTime();
+			
+			if(utils.ComparableTimes(entered_class)<=utils.ComparableTimes(session_start_time) && utils.ComparableTimes(exit_class)>=utils.ComparableTimes(session_end_time)) {
+				attendanceEntity.setAttendanceId(utils.GenerateSessionsId(5));
+				attendanceEntity.setStudentDetails(entity);
+				attendanceEntity.setSessionDetails(session);
+				attendanceEntity.setPresent(true);
+				
+				
+				list.add(attendanceEntity);
+				
+				entity.setAttendanceDetails(attendanceEntity);				
+				session.setAttendanceDetails(attendanceEntity);
+				attendanceRepository.save(attendanceEntity);
+				studentRepository.save(entity);
+				sessionsRepository.save(session);
+				
+			}
+			else {
+				attendanceEntity.setAttendanceId(utils.GenerateSessionsId(5));
+				attendanceEntity.setStudentDetails(entity);
+				attendanceEntity.setSessionDetails(session);
+				
+				list.add(attendanceEntity);
+				
+				entity.setAttendanceDetails(attendanceEntity);				
+				session.setAttendanceDetails(attendanceEntity);
+				attendanceRepository.save(attendanceEntity);
+				studentRepository.save(entity);
+				sessionsRepository.save(session);
+			}
+			
+		}
+		
+		
+		return list;
+	}
+
+	@Override
+	public ArrayList getAttendancePercentage(String studentId, String subject) {
+		
+		StudentEntity student = studentRepository.findStudentByStudentId(studentId);
+		
+		AttendanceEntity attendance = student.getAttendanceDetails();
+		
+		List<StudentEntity> students = new ArrayList<>();
+		
+		if(attendance.getSessionDetails().getSessionDetails().getTeacherDetails().getSubject().equalsIgnoreCase(subject)) {
+			
+			Iterator<AttendanceEntity> it = attendanceRepository.findAll().iterator();
+			
+			while(it.hasNext()) {
+				AttendanceEntity entity = it.next();
+				
+				if(entity.getStudentDetails().getStudentId().equals(studentId)) {
+					students.add(entity.getStudentDetails());
+				}
+			}
+			
+		}
+		
+		int countPresent=0;
+		
+		for(int i=0;i<students.size();i++)
+			if(students.get(i).getAttendanceDetails().isPresent()==true)
+				countPresent++;
+		System.out.println(countPresent);
+		double ans = ((double)countPresent/(double)students.size())*100.0;
+		
+		ArrayList responseList = new ArrayList();
+		
+		responseList.add(ans);
+		responseList.add(students.size());
+		
+		System.out.println(responseList);
+		
+		return responseList;
+		
 	}
 
 }

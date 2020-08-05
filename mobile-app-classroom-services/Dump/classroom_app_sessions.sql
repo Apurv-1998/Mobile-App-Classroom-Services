@@ -30,8 +30,11 @@ CREATE TABLE `sessions` (
   `sessions_password` varchar(255) NOT NULL,
   `start_time` varchar(255) NOT NULL,
   `sessions_details_id` bigint DEFAULT NULL,
+  `attendance_id` bigint DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FKnmrsrphoang28baj2und35bh5` (`sessions_details_id`),
+  KEY `FK2tqggxec3wtkw662j88jwy2jb` (`attendance_id`),
+  CONSTRAINT `FK2tqggxec3wtkw662j88jwy2jb` FOREIGN KEY (`attendance_id`) REFERENCES `attendance` (`id`),
   CONSTRAINT `FKnmrsrphoang28baj2und35bh5` FOREIGN KEY (`sessions_details_id`) REFERENCES `sessions_details` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -42,7 +45,7 @@ CREATE TABLE `sessions` (
 
 LOCK TABLES `sessions` WRITE;
 /*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
-INSERT INTO `sessions` VALUES (243,'11:00 AM','2020-07-10 05:30:00.000000','33b13O29y7','*KSm_h0n{q','10:00 AM',242),(244,'4:30 PM','2020-07-21 05:30:00.000000','9Qcnqqf7qp','qPY^C(t\'wF','3:15 PM',242);
+INSERT INTO `sessions` VALUES (255,'11:00','2020-07-10 05:30:00.000000','cv2opfcy6y','}TuhHHiG^)','10:00',254,261),(256,'16:30','2020-07-21 05:30:00.000000','2Ihr3h3rn4','_3)gho?*uF','15:15',254,263),(265,'13:15','2020-08-05 05:30:00.000000','yicph24ib4','ohKErC<M0t','12:53',264,267);
 /*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -55,4 +58,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-08-04 14:18:25
+-- Dump completed on 2020-08-05 14:41:36

@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.mobileapplication.app.classroom.service.dto.AddSectionDetailsDto;
 import com.mobileapplication.app.classroom.service.dto.AddTestDetailsDto;
+import com.mobileapplication.app.classroom.service.dto.AttendanceDto;
 import com.mobileapplication.app.classroom.service.dto.SessionDetailsDto;
 import com.mobileapplication.app.classroom.service.dto.TeacherDto;
 import com.mobileapplication.app.classroom.service.entity.FilesEntity;
@@ -24,5 +25,7 @@ public interface TeacherService {
 	List<FilesEntity> getAllFiles();
 
 	SessionDetailsDto addSessionDetails(String teacherId,SessionDetailsDto sessionDetailsDto);
+
+	void markAttendance(String teacherId, AttendanceDto attendanceDto);
 
 }
