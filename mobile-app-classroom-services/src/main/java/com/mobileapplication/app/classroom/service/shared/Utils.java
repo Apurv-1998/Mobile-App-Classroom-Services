@@ -38,6 +38,8 @@ public class Utils {
 	private final String SESSIONS_SALT = "ncoihq3hygft2yhpio43foi2h34h893467891q3hncgf7u21po348uhyrcb834huyxpmn34yr78yqohbnc8y438mxypqo398ytbcvy4IQUOHWE4BQPO";
 	private final String SESSIONS_PASSWORD_SALT = "nw;peiurfqhriufhioqhloijfoiqjh43ut092u3q490fuj&(*^%^&^R^GFUH)(*&^%E$RSDFCGHVJBKL_{}P:?><m,./'[poijhgGDSERTYUIKMNBVCXCFGHJ";
 	private final String SESSION_DETAILS_SALT = "NQEIOURHFIUQLHEIRUHFIOQHIOHIOQEYUFIOQHIOEHNCLQNERIHVIRBVWURPMXIUQIOEUJIOU94U790R8720943859047894YFJHQ";
+	private final String LIBRARY_SALT = "niuewgfuyiqgiuefiuwehfiuyqewuiyr8973894r72389ryhiuh8368736TR78GFIUFHGBKJIUERGHFUQO";
+	private final String FLOOR_SALT = "groundfirstsecoindthirdlastandjabtakhomanFLOOR";
 
 	public String generateStudentId(int length) {
 		return generatedStudentId(length);
@@ -79,9 +81,16 @@ public class Utils {
 	public String GenerateSessionDetailsId(int length) {
 		return generatedSessionDetailsId(length);
 	}
+	public String GenerateLibraryId(int length) {
+		return generatedLibraryId(length);
+	}
+	public String GenerateFloorId(int length) {
+		return generatedFloorId(length);
+	}
 
 	
-	
+
+
 	private String generatedStudentId(int length) {
 		StringBuilder sb = new StringBuilder(length);
 
@@ -314,6 +323,57 @@ public class Utils {
 			double ans = (numberOfClassesDone*AttendanceRest.THRESHOLD)/percentage;
 			return (int)Math.round(ans);
 		}
+	}
+
+
+	private String generatedLibraryId(int length) {
+		StringBuilder sb = new StringBuilder(length);
+
+		for (int i = 0; i < length; i++) {
+			sb.append(LIBRARY_SALT.charAt(RANDOM.nextInt(LIBRARY_SALT.length())));
+		}
+
+		return new String(sb);
+	}
+	
+	private String generatedFloorId(int length) {
+		StringBuilder sb = new StringBuilder(length);
+
+		for (int i = 0; i < length; i++) {
+			sb.append(FLOOR_SALT.charAt(RANDOM.nextInt(FLOOR_SALT.length())));
+		}
+
+		return new String(sb);
+	}
+	
+
+	public int getFloorNumber(String standard, String section) {
+		
+		System.out.println(standard+" "+section);
+		
+		String[][] s = SupportClass.STANDARD_LIST;
+		
+		boolean flag = false;
+		
+		int returnValue = 0;
+		for(int i=0;i<s.length;i++) {
+			for(int j=0;j<s[i].length;j++) {
+				if(s[i][j].equalsIgnoreCase(standard)) {
+					flag = true;
+					returnValue = i+1;
+					break;
+				}
+			}
+			if(flag)
+				break;
+		}
+		if(returnValue==0 || !flag)
+			throw new RuntimeException("Invalid Floor");
+		return returnValue;
+	}
+
+	public String getFloorName(int floorNumber) {
+		return SupportClass.STANDARD_NAME[floorNumber];
 	}
 
 }
