@@ -9,5 +9,7 @@ import com.mobileapplication.app.classroom.service.entity.OrganizationEntity;
 public interface OrganizationRepository extends CrudRepository<OrganizationEntity, Long> {
 
 	OrganizationEntity findOrganizationByName(String name);
+
+	OrganizationEntity findOrganizationByOrganizationId(String organizationId);
 	
 }

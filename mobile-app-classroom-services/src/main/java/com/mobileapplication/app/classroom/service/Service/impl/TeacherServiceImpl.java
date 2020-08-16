@@ -15,7 +15,11 @@ import com.mobileapplication.app.classroom.service.Service.StudentService;
 import com.mobileapplication.app.classroom.service.Service.SubjectService;
 import com.mobileapplication.app.classroom.service.Service.TeacherService;
 import com.mobileapplication.app.classroom.service.Service.TestService;
+import com.mobileapplication.app.classroom.service.dto.AddBooksDetailsDto;
+import com.mobileapplication.app.classroom.service.dto.AddLibraryDetailsDto;
 import com.mobileapplication.app.classroom.service.dto.AddSectionDetailsDto;
+import com.mobileapplication.app.classroom.service.dto.AddSportDto;
+import com.mobileapplication.app.classroom.service.dto.AddTeacherToSportsDto;
 import com.mobileapplication.app.classroom.service.dto.AddTestDetailsDto;
 import com.mobileapplication.app.classroom.service.dto.AttendanceDto;
 import com.mobileapplication.app.classroom.service.dto.SessionDetailsDto;
@@ -24,19 +28,25 @@ import com.mobileapplication.app.classroom.service.dto.StandardDto;
 import com.mobileapplication.app.classroom.service.dto.StudentScoresDto;
 import com.mobileapplication.app.classroom.service.dto.TeacherDto;
 import com.mobileapplication.app.classroom.service.entity.AttendanceEntity;
+import com.mobileapplication.app.classroom.service.entity.BookEntity;
 import com.mobileapplication.app.classroom.service.entity.FilesEntity;
+import com.mobileapplication.app.classroom.service.entity.LibraryEntity;
 import com.mobileapplication.app.classroom.service.entity.SessionDetailsEntity;
 import com.mobileapplication.app.classroom.service.entity.SessionsEntity;
+import com.mobileapplication.app.classroom.service.entity.SportEntity;
 import com.mobileapplication.app.classroom.service.entity.StandardEntity;
 import com.mobileapplication.app.classroom.service.entity.StudentEntity;
 import com.mobileapplication.app.classroom.service.entity.SubjectEntity;
 import com.mobileapplication.app.classroom.service.entity.TeacherEntity;
 import com.mobileapplication.app.classroom.service.entity.TestEntity;
 import com.mobileapplication.app.classroom.service.repository.AttendanceRepository;
+import com.mobileapplication.app.classroom.service.repository.BookRepository;
 import com.mobileapplication.app.classroom.service.repository.FilesRepository;
+import com.mobileapplication.app.classroom.service.repository.LibraryRepository;
 import com.mobileapplication.app.classroom.service.repository.OrganizationRepository;
 import com.mobileapplication.app.classroom.service.repository.SessionDetailsRepository;
 import com.mobileapplication.app.classroom.service.repository.SessionsRepository;
+import com.mobileapplication.app.classroom.service.repository.SportRepository;
 import com.mobileapplication.app.classroom.service.repository.StandardRepository;
 import com.mobileapplication.app.classroom.service.repository.StudentRepository;
 import com.mobileapplication.app.classroom.service.repository.SubjectRepository;
@@ -80,6 +90,15 @@ public class TeacherServiceImpl implements TeacherService {
 	
 	@Autowired
 	StandardRepository standardRepository;
+	
+	@Autowired
+	LibraryRepository libraryRepository;
+	
+	@Autowired
+	BookRepository bookRepository;
+	
+	@Autowired
+	SportRepository sportRepository;
 	
 	@Autowired
 	OrganizationService organizationService;
@@ -443,7 +462,7 @@ public class TeacherServiceImpl implements TeacherService {
 		List<AttendanceEntity> list = studentService.markStudentAttendance(attendanceEntity,requiredSession,attendanceEntity.getStandard(),attendanceEntity.getSection());
 		
 		
-		List<StandardEntity> standard_s = standardRepository.findStandardByStandardNameAndSection(attendanceEntity.getStandard(),attendanceEntity.getSection());
+		List<StandardEntity> standard_s = standardRepository.findStandardsByStandardNameAndSection(attendanceEntity.getStandard(),attendanceEntity.getSection());
 		
 		for(StandardEntity standard:standard_s) {
 			standard.setAttendanceDetails(list);
@@ -453,6 +472,153 @@ public class TeacherServiceImpl implements TeacherService {
 			attendanceEntity.setStandardDetails(standard);
 			attendanceRepository.save(attendanceEntity);
 		}
+		
+	}
+
+	@Override
+	public LibraryEntity addBooksInLibrary(AddLibraryDetailsDto addLibraryDetailsDto,String teacherId,String libraryId) {
+		
+		TeacherEntity librarian = teacherRepository.findTeachersByTeacherId(teacherId);
+		
+		LibraryEntity library = libraryRepository.findLibraryByLibraryId(libraryId);
+		
+		System.out.println(library);
+		
+		if(librarian==null)
+			throw new RuntimeException("No Librarian Exists");
+		
+		if(!librarian.getRole().equalsIgnoreCase("Librarian"))
+			throw new RuntimeException("No Librarian Exists");
+		
+		if(library==null)
+			throw new RuntimeException("No Library Exists");
+		
+		if(!addLibraryDetailsDto.getName().equalsIgnoreCase(library.getName()))
+			throw new RuntimeException("Wrong Library Name");
+		
+		LibraryEntity dummy = mapper.map(addLibraryDetailsDto,LibraryEntity.class);
+		List<BookEntity> books = dummy.getBookDetails();
+		
+		for(int i=0;i<books.size();i++) {
+			BookEntity book = books.get(i);
+			
+			book.setBookId(utils.GenerateLibraryId(15));
+			book.setLibraryDetails(library);
+			
+			books.set(i, book);
+		}
+		library.setBookDetails(books);
+		
+		
+		List<BookEntity> booksEntity = library.getBookDetails();
+		
+		for(int i=0;i<booksEntity.size();i++) {
+			BookEntity book = booksEntity.get(i);
+			
+			SubjectEntity subject = subjectRepository.findSubjectByName(book.getSubject());
+			
+			List<BookEntity> entity = subject.getBookDetails();
+			entity.add(book);
+			subject.setBookDetails(entity);
+			
+			
+			book.setSubjectDetails(subject);
+			
+			System.out.println(book);
+			
+			books.set(i, book);
+
+			subjectRepository.save(subject);
+		}
+		
+		System.out.println(books);
+		
+		library.setBookDetails(books);
+		
+		LibraryEntity response =  libraryRepository.save(library);
+		
+		
+		return response;
+	}
+
+	@Override
+	public BookEntity addCopiesForTheBook(String libraryId, String teacherId, String bookId, int copies) {
+		
+		LibraryEntity library = libraryRepository.findLibraryByLibraryId(libraryId);
+		
+		if(library==null)
+			throw new RuntimeException("No Library In The Organization");
+		
+		TeacherEntity librarian = teacherRepository.findTeachersByTeacherId(teacherId);
+		
+		if(librarian==null)
+			throw new RuntimeException("No Librarian In The Organization");
+		
+		BookEntity book = bookRepository.findBookByBookId(bookId);
+		
+		if(book==null)
+			throw new RuntimeException("No Book With The Given Id Exists");
+		
+		int total = book.getTotalCopies();
+		
+		book.setTotalCopies(total+copies);
+		
+		BookEntity saved = bookRepository.save(book);
+		
+		return saved;
+	}
+
+	@Override
+	public TeacherEntity addTeacherToSports(String teacherId,AddTeacherToSportsDto addTeacherToSportsDto) {
+		
+		TeacherEntity teacher = teacherRepository.findTeachersByTeacherId(teacherId);
+		
+		if(!teacher.getRole().equalsIgnoreCase("PT") && !teacher.getRole().equalsIgnoreCase("PE") && !teacher.getRole().equalsIgnoreCase("PTE"))
+			throw new RuntimeException("The mentioned Teacher is Not a sports teacher");
+		
+		List<SportEntity> sports = new ArrayList<>();
+		
+		List<AddSportDto> sportNames =  addTeacherToSportsDto.getSportDetails();
+		
+		
+		for(AddSportDto sportName:sportNames) {
+			SportEntity sport = sportRepository.findSportsBySportName(sportName.getSportName());
+			if(sport==null)
+				continue;
+			sports.add(sport);
+		}
+		
+		if(sports.size()==0)
+			throw new RuntimeException("Mentioned Sports Have Not Been Started Yet.");
+		
+		teacher.setSportDetails(sports);
+		
+		TeacherEntity saved = teacherRepository.save(teacher);
+		
+		
+		for(SportEntity sport:sports) {
+			if(sport.getTeacherDetails()==null) {
+				List<TeacherEntity> teachers = new ArrayList<>();
+				teachers.add(saved);
+				sport.setTeacherDetails(teachers);
+			}
+			else {
+				if(sport.getTeacherDetails().size()>2) {
+					System.out.println("Maximum SportTeachers Already Assigned "+sport.getTeacherDetails());
+					continue;
+				}
+				List<TeacherEntity> teachers = sport.getTeacherDetails();
+				teachers.add(saved);
+				sport.setTeacherDetails(teachers);
+			}
+			sportRepository.save(sport);
+		}
+		
+		
+		return saved;
+		
+		
+		
 		
 	}
 

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -30,6 +31,8 @@ public class StandardEntity implements Serializable {
 	private String standardName;
 	@Column(nullable = false)
 	private String section;
+	@Column(nullable = false)
+	private int strength;
 
 	@ManyToOne
 	@JoinColumn(name = "teachers_id")
@@ -41,6 +44,11 @@ public class StandardEntity implements Serializable {
 
 	@OneToMany(mappedBy = "standardDetails")
 	private List<AttendanceEntity> attendanceDetails;
+
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinColumn(name = "floors_id")
+	@JsonIgnore
+	private FloorEntity floorDetails;
 
 	public long getId() {
 		return id;
@@ -88,6 +96,28 @@ public class StandardEntity implements Serializable {
 
 	public void setAttendanceDetails(List<AttendanceEntity> attendanceDetails) {
 		this.attendanceDetails = attendanceDetails;
+	}
+
+	public int getStrength() {
+		return strength;
+	}
+
+	public void setStrength(int strength) {
+		this.strength = strength;
+	}
+
+	public FloorEntity getFloorDetails() {
+		return floorDetails;
+	}
+
+	public void setFloorDetails(FloorEntity floorDetails) {
+		this.floorDetails = floorDetails;
+	}
+
+	@Override
+	public String toString() {
+		return "StandardEntity [id=" + id + ", standardName=" + standardName + ", section=" + section + ", strength="
+				+ strength + "]";
 	}
 
 }

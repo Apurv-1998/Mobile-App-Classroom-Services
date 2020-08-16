@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -43,6 +45,8 @@ public class TeacherEntity implements Serializable {
 	private String password;
 	@Column(nullable = false)
 	private String subject;
+	@Column(nullable = false)
+	private String role;
 
 	private String emailVerificationToken;
 	private boolean emailVerificationStatus = false;
@@ -60,6 +64,10 @@ public class TeacherEntity implements Serializable {
 	@OneToMany(mappedBy = "teacherDetails", cascade = CascadeType.ALL)
 	private List<SessionDetailsEntity> sessionDetails;
 
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "sports_teachers", joinColumns = @JoinColumn(name = "teachers_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "sports_id", referencedColumnName = "id"))
+	private List<SportEntity> sportDetails;
+
 	@ManyToOne
 	@JoinColumn(name = "organizations_id")
 	@JsonIgnore
@@ -69,6 +77,14 @@ public class TeacherEntity implements Serializable {
 	@JoinColumn(name = "subjects_id")
 	@JsonIgnore
 	private SubjectEntity subjectDetails;
+
+	@ManyToOne
+	@JoinColumn(name = "staff_room_id")
+	@JsonIgnore
+	private StaffRoomEntity staffRoomDetails;
+
+	@ManyToMany(mappedBy = "teacherDetails")
+	private List<PlayGroundEntity> playGroundDetails;
 
 	public long getId() {
 		return id;
@@ -222,11 +238,43 @@ public class TeacherEntity implements Serializable {
 		this.fileDetails = fileDetails;
 	}
 
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	public StaffRoomEntity getStaffRoomDetails() {
+		return staffRoomDetails;
+	}
+
+	public void setStaffRoomDetails(StaffRoomEntity staffRoomDetails) {
+		this.staffRoomDetails = staffRoomDetails;
+	}
+
+	public List<SportEntity> getSportDetails() {
+		return sportDetails;
+	}
+
+	public void setSportDetails(List<SportEntity> sportDetails) {
+		this.sportDetails = sportDetails;
+	}
+
+	public List<PlayGroundEntity> getPlayGroundDetails() {
+		return playGroundDetails;
+	}
+
+	public void setPlayGroundDetails(List<PlayGroundEntity> playGroundDetails) {
+		this.playGroundDetails = playGroundDetails;
+	}
+
 	@Override
 	public String toString() {
 		return "TeacherEntity [id=" + id + ", teacherId=" + teacherId + ", firstName=" + firstName + ", lastname="
 				+ lastname + ", regId=" + regId + ", organization=" + organization + ", dob=" + dob + ", email=" + email
-				+ ", password=" + password + ", subject=" + subject + ", emailVerificationToken="
+				+ ", password=" + password + ", subject=" + subject + ", role=" + role + ", emailVerificationToken="
 				+ emailVerificationToken + ", emailVerificationStatus=" + emailVerificationStatus
 				+ ", encryptedPassword=" + encryptedPassword + ", encrpytedRegId=" + encrpytedRegId + ", standard="
 				+ standard + "]";

@@ -12,6 +12,7 @@ public class CreateTeacherRequestDetailsModel {
 	private String email;
 	private String password;
 	private String subject;
+	private String role;
 	private List<StandardDetailsModel> standard;
 
 	public String getFirstName() {
@@ -91,6 +92,14 @@ public class CreateTeacherRequestDetailsModel {
 		return "CreateTeacherRequestDetailsModel [firstName=" + firstName + ", lastname=" + lastname + ", regId="
 				+ regId + ", organization=" + organization + ", dob=" + dob + ", email=" + email + ", password="
 				+ password + ", subject=" + subject + ", standard=" + standard + "]";
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 }
