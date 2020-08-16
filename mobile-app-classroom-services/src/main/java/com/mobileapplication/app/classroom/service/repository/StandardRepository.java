@@ -15,6 +15,9 @@ public interface StandardRepository extends CrudRepository<StandardEntity, Long>
 	
 	
 	@Query(value = "SELECT * FROM standards s WHERE s.standard_name = ?1 AND s.section = ?2",nativeQuery = true)
-	List<StandardEntity> findStandardByStandardNameAndSection(String standard, String section);
+	List<StandardEntity> findStandardsByStandardNameAndSection(String standard, String section);
+	
+	@Query(value = "SELECT * FROM standards s WHERE s.standard_name = ?1 AND s.section = ?2",nativeQuery = true)
+	StandardEntity findStandardByStandardNameAndSection(String standard, String section);
 
 }

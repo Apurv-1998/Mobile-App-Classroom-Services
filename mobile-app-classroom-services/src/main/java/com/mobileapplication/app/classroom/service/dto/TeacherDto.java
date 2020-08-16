@@ -21,6 +21,7 @@ public class TeacherDto implements Serializable {
 	private boolean emailVerificationStatus;
 	private String encryptedPassword;
 	private String encrpytedRegId;
+	private String role;
 
 	private List<StandardDto> standard;
 
@@ -154,6 +155,14 @@ public class TeacherDto implements Serializable {
 
 	public void setSubjectDetails(AddSubjectDto subjectDetails) {
 		this.subjectDetails = subjectDetails;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 	@Override

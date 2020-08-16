@@ -48,6 +48,9 @@ public class SubjectEntity implements Serializable {
 	@OneToMany(mappedBy = "subjectDetails", cascade = CascadeType.ALL)
 	private List<FilesEntity> fileDetails;
 
+	@OneToMany(mappedBy = "subjectDetails", cascade = CascadeType.ALL)
+	private List<BookEntity> bookDetails;
+
 	@ManyToMany(mappedBy = "subjectDetails")
 	@JsonIgnore
 	private Collection<StudentEntity> studentDetails;
@@ -137,11 +140,18 @@ public class SubjectEntity implements Serializable {
 		this.fileDetails = fileDetails;
 	}
 
+	public List<BookEntity> getBookDetails() {
+		return bookDetails;
+	}
+
+	public void setBookDetails(List<BookEntity> bookDetails) {
+		this.bookDetails = bookDetails;
+	}
+
 	@Override
 	public String toString() {
 		return "SubjectEntity [id=" + id + ", subjectId=" + subjectId + ", name=" + name + ", standard=" + standard
-				+ ", section=" + section + ", teacherDetails=" + teacherDetails + ", testDetails=" + testDetails
-				+ ", studentDetails=" + studentDetails + ", standardDetails=" + standardDetails + "]";
+				+ ", section=" + section + "]";
 	}
 
 }
